@@ -60,9 +60,9 @@ export function getNewVideoSettings(): VideoGenerationSettings {
     regenerateVideo: true,
     generatedVideos: [], // empty for new scene
     selectedVideo: undefined,
-  }
+  };
 
-  return  newVideoGenSettings;
+  return newVideoGenSettings;
 }
 
 export function getAspectRatios() {
@@ -137,8 +137,11 @@ export function updateScenesWithGeneratedVideos(
             frameUris: [],
           } as Video;
         });
-        // Always replace generated videos
-        scene.videoGenerationSettings.generatedVideos = genVideos;
+        // Add new videos
+        scene.videoGenerationSettings.generatedVideos.push.apply(
+          scene.videoGenerationSettings.generatedVideos,
+          genVideos
+        );
         // Select first generated video as selected image for video
         if (genVideos.length > 0) {
           scene.videoGenerationSettings.selectedVideo = genVideos[0];

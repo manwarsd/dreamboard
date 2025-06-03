@@ -163,6 +163,7 @@ export class FileUploaderComponent {
         mimeType: file.type,
         type: this.fileType,
       };
+      openSnackBar(this._snackBar, `Uploading file ${fileItem.name}...`);
       this.fileItems = [fileItem]; // Just 1 file for now
       // Upload to server
       this.filesManagerService.uploadFile(this.storyId, formData).subscribe(
@@ -171,6 +172,10 @@ export class FileUploaderComponent {
             this.setUploadStatus(UploadStatus.Success);
             const uploadedFile = response.body;
             console.log(`File uploaded to server ${uploadedFile.gcs_uri}`);
+            openSnackBar(
+              this._snackBar,
+              `File ${uploadedFile.name} uploaded successfully!`
+            );
             fileItem.gcsUri = uploadedFile.gcs_uri;
             fileItem.signedUri = uploadedFile.signed_uri;
             fileItem.gcsFusePath = uploadedFile.gcs_fuse_path;
