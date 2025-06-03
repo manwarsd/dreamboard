@@ -1,0 +1,148 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Video Generation endpoints handled by the FastAPI Router.
+
+This module defines FastAPI endpoints for interacting with video generation
+services, including health checks, video creation, and merging operations
+using the Veo platform.
+"""
+
+import logging
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import Response
+from models import request_models
+from models.video import video_request_models
+from models.video.video_gen_models import VideoGenerationResponse
+from services.video import video_generator
+
+# Initialize the FastAPI router for video generation endpoints.
+video_gen_router = APIRouter(prefix="/video_generation")
+
+
+@video_gen_router.get("/video_health_check")
+def video_health_check():
+    """
+    Endpoint to perform a health check for the Dreamboard video service.
+
+    Returns:
+        A JSON response indicating the status of the health check.
+    """
+    return {"status": "Success!"}
+
+
+@video_gen_router.post("/get_default_video_prompt")
+def get_default_video_prompt(scene_segments: list[request_models.SceneSegmentRequest]):
+    """
+    Retrieves a default template for video generation prompts.
+
+    Args:
+        scene_segments: A list of `SceneSegmentRequest` objects (currently
+                        unused in this implementation).
+
+    Returns:
+        An empty string as a placeholder for a default video prompt.
+
+    Raises:
+        HTTPException (500): If an unexpected error occurs.
+    """
+    try:
+        # TODO: Implement actual default video prompt generation logic here.
+        return ""
+    except Exception as ex:
+        logging.error("Dreamboard - ERROR: %s", str(ex))
+        raise HTTPException(status_code=500, detail=str(ex)) from ex
+
+
+@video_gen_router.post("/generate_videos_from_scenes/{story_id}")
+def generate_videos_from_scenes(
+    story_id: str,
+    video_generation: video_request_models.VideoGenerationRequest,
+) -> list[VideoGenerationResponse]:
+    """
+    Generates one or more videos using the Veo platform based on scenes.
+
+    Args:
+        story_id: The unique identifier for the story.
+        video_generation: A `VideoGenerationRequest` object containing all
+                          parameters required for video creation.
+
+    Returns:
+        A list of `VideoGenerationResponse` objects detailing the results
+        of the video generation process.
+
+    Raises:
+        HTTPException (500): If an error occurs during video generation.
+    """
+    try:
+        logging.info(
+            (
+                "DreamBoard - VIDEO_GEN_ROUTES: Starting video generation "
+                "for story %s..."
+            ),
+            story_id,
+        )
+        video_gen_resps = video_generator.video_generator.generate_videos_from_scenes(
+            story_id, video_generation
+        )
+
+        return video_gen_resps
+    except Exception as ex:
+        logging.error("DreamBoard - VIDEO_GEN_ROUTES: - ERROR: %s", str(ex))
+        raise HTTPException(status_code=500, detail=str(ex)) from ex
+
+
+@video_gen_router.post("/merge_videos/{story_id}")
+def merge_videos(
+    story_id: str,
+    video_generation: video_request_models.VideoGenerationRequest,
+) -> VideoGenerationResponse:
+    """
+    Merges a list of previously generated videos into a single video.
+
+    Args:
+        story_id: The unique identifier for the story.
+        video_generation: A `VideoGenerationRequest` object specifying the
+                          videos to merge and merge parameters.
+
+    Returns:
+        A `VideoGenerationResponse` object for the merged video.
+
+    Raises:
+        HTTPException (500): If there are no videos to merge or another
+                             error occurs.
+    """
+    try:
+        logging.info(
+            (
+                "DreamBoard - VIDEO_GEN_ROUTES: Starting merging videos "
+                "for story %s..."
+            ),
+            story_id,
+        )
+        video_gen_response = video_generator.video_generator.merge_videos(
+            story_id, video_generation
+        )
+        if video_gen_response:
+            return video_gen_response
+        else:
+            # Handle the case where the merge operation returns no video.
+            return Response(
+                content="ERROR: There are not videos to merge.",
+                status_code=500,
+            )
+    except Exception as ex:
+        logging.error("DreamBoard - VIDEO_GEN_ROUTES: - ERROR: %s", str(ex))
+        raise HTTPException(status_code=500, detail=str(ex)) from ex

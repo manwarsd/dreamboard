@@ -1,0 +1,43 @@
+/***************************************************************************
+ *
+ *  Copyright 2025 Google Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Note that these code samples being shared are not official Google
+ *  products and are not formally supported.
+ *
+ ***************************************************************************/
+
+.sidenav {
+  width: 5%;
+  padding: 20px;
+  color: white;
+}
+
+mat-drawer {
+  background-color: white;
+  background-color: #8d779b;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  border-radius: 0px;
+}
+
+.stories-container {
+  margin-top: 40px;
+}
+
+.stories-list {
+  margin-left: 16px;
+}

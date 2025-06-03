@@ -1,0 +1,28 @@
+<div class="storyboard-container">
+  <h1>Storyboard</h1>
+  <mat-tab-group
+    mat-stretch-tabs="false"
+    mat-align-tabs="start"
+    dynamicHeight
+    [(selectedIndex)]="selectedTab"
+  >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>auto_fix_high</mat-icon>&nbsp; AI Brainstorm
+      </ng-template>
+      <app-brainstorm></app-brainstorm>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>build</mat-icon>&nbsp; Scene Builder
+      </ng-template>
+      <app-scene-builder></app-scene-builder>
+    </mat-tab>
+    <mat-tab label="Post Video Production">
+      <ng-template mat-tab-label>
+        <mat-icon>video_settings</mat-icon>&nbsp; Post Video Production
+      </ng-template>
+      <app-post-video-production></app-post-video-production>
+    </mat-tab>
+  </mat-tab-group>
+</div>

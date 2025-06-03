@@ -1,0 +1,26 @@
+<div class="video-container">
+  @if(generatedVideo) {
+  <video #finalVideo width="600px" height="400px" controls>
+    <source [src]="generatedVideo.signedUri" type="video/mp4" />
+  </video>
+  <div class="button-actions">
+    <button mat-flat-button>
+      <mat-icon>download</mat-icon>
+      <a
+        [href]="generatedVideo.signedUri"
+        [download]="generatedVideo.name"
+        target="_blank"
+        >Export</a
+      >
+    </button>
+  </div>
+
+  } @else {
+  <div class="initial-screen">
+    <p>
+      Your video will show here <br />
+      <mat-icon>videocamera</mat-icon>
+    </p>
+  </div>
+  }
+</div>
