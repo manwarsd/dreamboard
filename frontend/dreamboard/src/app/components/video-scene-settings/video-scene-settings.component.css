@@ -1,0 +1,120 @@
+/***************************************************************************
+ *
+ *  Copyright 2025 Google Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Note that these code samples being shared are not official Google
+ *  products and are not formally supported.
+ *
+ ***************************************************************************/
+
+.videos-container {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0px;
+
+  .videos {
+    width: 500px;
+    height: 400px;
+    background-color: white;
+    border: 1px dotted gray;
+    margin: auto 8px;
+
+    .image-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+
+      button {
+        margin-right: 8px;
+      }
+    }
+
+    .c-buttons {
+      width: 200px;
+      margin: auto;
+
+      button {
+        margin: 8px 0px 8px 35px;
+      }
+    }
+  }
+
+  .reference-image {
+    width: 300px;
+    height: 300px;
+    margin: auto 8px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    p {
+      margin-top: 120px;
+    }
+  }
+
+  p {
+    margin-top: 190px;
+    text-align: center;
+  }
+}
+
+.item-container {
+  display: flex;
+  justify-content: flex-start;
+
+  mat-form-field {
+    width: 82%;
+  }
+
+  button {
+    margin-left: 12px;
+  }
+}
+
+mat-form-field {
+  margin-right: 8px;
+}
+
+.generate-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+p {
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+.large-textarea {
+  width: 40%;
+}
+
+form {
+  margin-top: 32px;
+}
+
+a {
+  color: #ba005c;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ba005c;
+  text-decoration:none;
+  cursor:pointer;
+}

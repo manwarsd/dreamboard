@@ -1,0 +1,103 @@
+/***************************************************************************
+ *
+ *  Copyright 2025 Google Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Note that these code samples being shared are not official Google
+ *  products and are not formally supported.
+ *
+ ***************************************************************************/
+
+.scenes-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  mat-card-subtitle {
+    font-size: 10px;
+  }
+}
+
+.scene-card {
+  max-width: 500px;
+  margin: 32px 16px;
+
+  mat-card-header {
+    mat-icon {
+      margin-left: 85px;
+    }
+  }
+
+  .scene-image {
+    width: 95%;
+    margin: auto;
+    border: 1px solid rgb(192, 191, 191);
+    border-radius: 10px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    p {
+      margin: 100px;
+      text-align: center;
+    }
+  }
+}
+
+.header-image {
+  background-image: url("../../../../public/scene.png");
+  background-size: cover;
+  border-radius: 0px;
+}
+
+.actions {
+  margin-top: 12px;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 100px 0px 0px;
+
+  button {
+    margin-right: 8px;
+  }
+}
+
+.initial-add-scene {
+  width: 30%;
+  margin: 5% auto;
+  border: 1px dotted gray;
+  height: 300px;
+
+  div {
+    margin: 5% auto;
+    text-align: center;
+
+    button {
+      width: 200px;
+      height: 200px;
+    }
+  }
+}
+
+.story-id {
+  font-size: 10px;
+}
+
+.transition {
+  margin-top: 250px;
+}
