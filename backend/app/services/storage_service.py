@@ -1,0 +1,183 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Service that interacts with the Google Cloud Storage API."""
+
+import os
+from google.cloud import storage
+import logging
+import base64
+
+
+class StorageService:
+    """Service that interacts with the Google Cloud Storage API."""
+
+    # Cloud Storage Configuration
+    storage_client: storage.client.Client
+    bucket: storage.bucket.Bucket
+    storage_folder_name: str | None = (
+        "image_folder/"  # Optional folder within the bucket
+    )
+    image_mime_type: str = "image/png"
+
+    def __init__(self, storage_folder_name: str | None = None):
+        """
+        Initializes the StorageService.
+
+        Args:
+            storage_folder_name: An optional folder name within the GCS bucket.
+        """
+        self.storage_project = os.getenv("PROJECT_ID")
+        self.bucket_name = os.getenv("GCS_BUCKET")
+        self.storage_folder_name = storage_folder_name
+
+        # Create Storage client
+        self.storage_client = storage.Client(project=self.storage_project)
+        self.bucket = self.storage_client.bucket(self.bucket_name)
+
+    def save_image_to_folder(self,
+                             blob_name: str,
+                             image_data: str,
+                             mime_type: str):
+        """
+        Saves an image to a specified folder in a GCS bucket.
+
+        Args:
+            blob_name: The name of the blob (file) in the bucket.
+            image_data: The image data to upload.
+            mime_type: The MIME type of the image (e.g., "image/png").
+
+        Returns:
+            The public URL of the uploaded image.
+        """
+        blob = self.bucket.blob(f"{self.storage_folder_name}/{blob_name}")
+
+        # Upload image.
+        blob.upload_from_file(image_data, content_type=mime_type)
+
+        return blob.public_url
+
+    def get_blob(self, uri: str) -> any:
+        """
+        Returns a GCS blob object from its full URI.
+
+        Args:
+            uri: The full URI of the GCS blob
+            (e.g., "gs://my-bucket/path/to/file").
+
+        Returns:
+            The GCS blob object.
+        """
+        bucket, path = uri.replace("gs://", "").split("/", 1)
+        return storage.Client().get_bucket(bucket).get_blob(path)
+
+    def download_file(self, uri: str) -> str:
+        """
+        Downloads a file from GCS and returns its content as a base64 string.
+
+        Args:
+            uri: The URI of the file to download.
+
+        Returns:
+            A dictionary containing the image name, base64 encoded image data,
+            and content type, or an empty string if the URI is not found.
+        """
+        blob = self.get_blob(uri)
+        if blob:
+            image_name = uri.split("/")[-1]
+            content_type = (
+                blob.content_type if blob.content_type
+                else "application/octet-stream"
+            )
+            image_data = blob.download_as_bytes()
+
+            image_base64 = base64.b64encode(image_data).decode("utf-8")
+
+            return {
+                "image_name": f"{image_name}",
+                "image_data": f"{image_base64}",
+                "content_type": f"{content_type}",
+            }
+        else:
+            logging.error("download_file - URI %s not found", uri)
+            return ""
+
+    # TODO: remove if not needed - downloads directly to server
+    def download_file_to_server(self, output_path: str, uri: str) -> str:
+        """
+        Writes a file from GCS to a specified local path on the server.
+
+        Args:
+            output_path: The local path where the file will be saved.
+            uri: The URI of the file to download from GCS.
+
+        Returns:
+            The name of the downloaded blob, or an empty string if not found.
+        """
+        with open(output_path, "wb") as f:
+            blob = self.get_blob(uri)
+            if blob:
+                f.write(blob.download_as_string(client=None))
+                print(f"File {uri} downloaded to path {output_path}")
+                return blob.name
+            else:
+                logging.error("download_file - URI %s not found", uri)
+                return ""
+
+    def upload_from_filename(self, source_file_name, destination_blob_name):
+        """
+        Uploads a file from a local path to GCS.
+
+        Args:
+            source_file_name: The path to the local file to upload.
+            destination_blob_name: The desired name of the blob in GCS.
+        """
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(os.getenv("GCS_BUCKET"))
+        blob = bucket.blob(destination_blob_name)
+
+        # Optional: set a generation-match precondition to avoid potential race
+        # conditions and data corruptions. The request to upload is aborted if
+        # the object's generation number does not match your precondition. For a
+        # destination object that does not yet exist, set the
+        # if_generation_match precondition to 0. If the destination object
+        # already exists in your bucket, set instead a generation-match
+        # precondition using its generation number.
+        #generation_match_precondition = 0
+        blob.upload_from_filename(source_file_name)
+
+        logging.info("File %s uploaded to %s.", source_file_name,
+                     destination_blob_name)
+
+    def upload_from_frontend(self,
+                             blob_name: str,
+                             file_data: str,
+                             mime_type: str):
+        """
+        Uploads a file received from the frontend.
+
+        Args:
+            blob_name: The name of the blob (file) in the bucket.
+            file_data: The file data to upload.
+            mime_type: The MIME type of the file.
+
+        Returns:
+            The GCS blob object.
+        """
+        blob = self.bucket.blob(blob_name)
+        blob.upload_from_file(file_data, content_type=mime_type)  # Upload file.
+        return blob
+
+
+storage_service = StorageService()
