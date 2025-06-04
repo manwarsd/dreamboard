@@ -262,25 +262,16 @@ export class SceneBuilderComponent {
       .generateVideosFromScenes(this.storyId, videoGeneration)
       .subscribe(
         (resps: VideoGenerationResponse[]) => {
+          openSnackBar(
+            this._snackBar,
+            'Videos for scenes created successfully! Please check each scene individually.',
+            10
+          );
           // Find scenes in responses to update generated videos
           const executionStatus = updateScenesWithGeneratedVideos(
             resps,
             this.scenes
           );
-          if (executionStatus['succeded']) {
-            openSnackBar(
-              this._snackBar,
-              'Videos for scenes created successfully! Please check each scene individually.',
-              10
-            );
-          } else {
-            // Wait longer to let the user see the message
-            openSnackBar(
-              this._snackBar,
-              executionStatus['execution_message'],
-              30
-            );
-          }
         },
         (error: any) => {
           let errorMessage;
