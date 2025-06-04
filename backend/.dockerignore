@@ -20,6 +20,6 @@ Dockerfile
 deploy.sh
 README.md
 
-**/dreamboard
+app/dreamboard
 TEST.py
 .env
