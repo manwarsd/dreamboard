@@ -43,6 +43,7 @@ enable_services() {
     gcloud services enable aiplatform.googleapis.com
     gcloud services enable servicemanagement.googleapis.com
     gcloud services enable servicecontrol.googleapis.com
+    gcloud services enable iap.googleapis.com
     echo
 }
 
@@ -63,20 +64,22 @@ create_service_account() {
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
         --member serviceAccount:$SERVICE_ACCOUNT \
         --role roles/logging.logWriter
-    gcloud projects add-iam-policy-binding PROJECT_NAME \
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
        --member "serviceAccount:$SERVICE_ACCOUNT" \
        --role roles/servicemanagement.serviceController
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
     --member "serviceAccount:$SERVICE_ACCOUNT" \
     --role roles/servicemanagement.serviceController
-
-    # Compute Service Account roles
-    gcloud run services add-iam-policy-binding $CLOUD_RUN_SERVICE_NAME \
+    # Compute service account permissions
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
     --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role "roles/run.invoker" \
-    --platform managed \
-    --project $GOOGLE_CLOUD_PROJECT \
-    --region $LOCATION
+    --role roles/storage.objectViewer
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+    --role roles/logging.logWriter
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+    --role roles/artifactregistry.writer
     echo
 }
 
@@ -104,7 +107,7 @@ redeploy_cloud_run_service_with_espv2() {
     --add-volume-mount volume=$VOLUME_NAME,mount-path=$MOUNT_PATH \
     --memory 4Gi \
     --set-env-vars PROJECT_ID=$GOOGLE_CLOUD_PROJECT,LOCATION=$LOCATION,ESPv2_ARGS=--cors_preset=basic \
-    --allow-unauthenticated # REMOVE
+    #--allow-unauthenticated # REMOVE
     echo
 }
 
@@ -159,7 +162,7 @@ function init() {
         if confirm "Continue?"; then
             echo
             # Enable services
-            #enable_services
+            enable_services
 
             # Create service account
             EXISTING_SERVICE_ACCOUNT=$(gcloud iam service-accounts list --filter "email:${SERVICE_ACCOUNT_NAME}" --format="value(email)")
@@ -173,7 +176,7 @@ function init() {
 
             # Create GCS bucket
             BUCKET_EXISTS=$(gcloud storage ls $BUCKET > /dev/null 2>&1 && echo "true" || echo "false")
-            if [ $BUCKET_EXISTS ]; then
+            if [ "$BUCKET_EXISTS" == "true" ]; then
                 echo
                 echo "${text_yellow}Bucket $BUCKET_NAME already exists. Skipping bucket creation.${reset}"
                 echo
@@ -186,20 +189,30 @@ function init() {
 
             echo "Waiting for the IAM roles to be applied..."
             echo
-            #sleep 60 # To wait for the IAM roles to be reflected or an error is thrown
+            sleep 60 # To wait for the IAM roles to be reflected or an error is thrown
 
             # Deploy Backend Cloud Run Service
             deploy_cloud_run_service
+
+            sleep 10 # To wait for the service to be ready
+
+            # Compute Service Account roles
+            gcloud run services add-iam-policy-binding $CLOUD_RUN_SERVICE_NAME \
+            --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+            --role "roles/run.invoker" \
+            --platform managed \
+            --project $GOOGLE_CLOUD_PROJECT \
+            --region $LOCATION
 
             # Replace Cloud Run host name and URL for endpoint deployment
             CLOUD_RUN_SERVICE_URL="https://"$CLOUD_RUN_SERVICE_NAME"-"$PROJECT_NUMBER"."$LOCATION".run.app"
             echo "Cloud Run Service Url ->" $CLOUD_RUN_SERVICE_URL
             CLOUD_RUN_HOST_NAME=$(echo $CLOUD_RUN_SERVICE_URL | sed 's/https:\/\///g')
             echo "Cloud Run Host Name -> "$CLOUD_RUN_HOST_NAME
-            #sed "s@{CLOUD_RUN_HOST_NAME}@$CLOUD_RUN_HOST_NAME@g; s@{CLOUD_RUN_SERVICE_URL}@$CLOUD_RUN_SERVICE_URL@g;" openapi-run-template.yaml > openapi-run.yaml
+            sed "s@{CLOUD_RUN_HOST_NAME}@$CLOUD_RUN_HOST_NAME@g; s@{CLOUD_RUN_SERVICE_URL}@$CLOUD_RUN_SERVICE_URL@g;" openapi-run-template.yaml > openapi-run.yaml
 
             # Deploy Backend Endpoint
-            #deploy_endpoint
+            deploy_endpoint
 
             echo "✅ ${bold}${text_green} Done!${reset}"
             echo
