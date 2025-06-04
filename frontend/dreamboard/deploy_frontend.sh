@@ -77,6 +77,8 @@ if confirm "Do you wish to proceed?"; then
 
         cd src/environments/
         sed "s@{BACKEND_CLOUD_RUN_SERVICE_URL}@$BACKEND_CLOUD_RUN_SERVICE_URL@g;" environment-template.ts > environment.ts
+        # TODO (ae) Workaround for now
+        sed "s@{BACKEND_CLOUD_RUN_SERVICE_URL}@$BACKEND_CLOUD_RUN_SERVICE_URL@g;" environment-template.ts > environment.development.ts
 
         cd ..
         cd ..
