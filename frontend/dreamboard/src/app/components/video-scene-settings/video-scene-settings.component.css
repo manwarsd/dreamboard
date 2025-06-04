@@ -106,6 +106,10 @@ p {
 
 form {
   margin-top: 32px;
+
+  .selected-video {
+    width: 30%;
+  }
 }
 
 a {

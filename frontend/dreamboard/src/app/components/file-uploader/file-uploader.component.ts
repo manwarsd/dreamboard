@@ -174,7 +174,8 @@ export class FileUploaderComponent {
             console.log(`File uploaded to server ${uploadedFile.gcs_uri}`);
             openSnackBar(
               this._snackBar,
-              `File ${uploadedFile.name} uploaded successfully!`
+              `File ${uploadedFile.name} uploaded successfully!`,
+              10
             );
             fileItem.gcsUri = uploadedFile.gcs_uri;
             fileItem.signedUri = uploadedFile.signed_uri;

@@ -298,8 +298,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
         this.currentGeneratedVideoIndex
       ];
     // Set selected video in scene to be used as selectedVideo segment in final video
-    this.scene.videoGenerationSettings.selectedVideo =
-    selectedVideo;
+    this.scene.videoGenerationSettings.selectedVideo = selectedVideo;
   }
 
   /**
@@ -329,16 +328,18 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
       .subscribe(
         (resps: VideoGenerationResponse[]) => {
           // Find scene in responses to update generated videos
-          closeSnackBar(this._snackBar);
           const executionStatus = updateScenesWithGeneratedVideos(resps, [
             this.scene,
           ]);
           // Set selected video for video segment generation
           if (this.scene.videoGenerationSettings.generatedVideos.length > 0) {
-            // Select the first video
-            const video = this.scene.videoGenerationSettings.generatedVideos[0];
+            // Select the last video
+            const lastVideo =
+              this.scene.videoGenerationSettings.generatedVideos[
+                this.scene.videoGenerationSettings.generatedVideos.length - 1
+              ];
             const updateForm = true;
-            this.updateSelectedVideo(video.signedUri, updateForm);
+            this.updateSelectedVideo(lastVideo.signedUri, updateForm);
           }
           openSnackBar(
             this._snackBar,
@@ -404,10 +405,10 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
         ?.value!,
       generate_video_frames: false, // TODO (ae): include this later
       regenerate_video_segment: true, // true for single video generation
-      selected_video: undefined // Since not required for the GENERATION operation
-    }
+      selected_video: undefined, // Since not required for the GENERATION operation
+    };
 
-    return videoSegment
+    return videoSegment;
   }
 
   /**
