@@ -93,6 +93,7 @@ deploy_cloud_run_service() {
     --memory 4Gi \
     --set-env-vars PROJECT_ID=$GOOGLE_CLOUD_PROJECT,LOCATION=$LOCATION,GCS_BUCKET=$BUCKET_NAME \
     --allow-unauthenticated # REMOVE
+    sleep 180
     echo
 }
 
@@ -189,7 +190,6 @@ function init() {
 
             echo "Waiting for the IAM roles to be applied..."
             echo
-            sleep 60 # To wait for the IAM roles to be reflected or an error is thrown
 
             # Deploy Backend Cloud Run Service
             deploy_cloud_run_service
