@@ -17,12 +17,12 @@ The general folder structure is as follows under backend/app:
 # Installation
 Installation on production is done by deploying deploy_backend.sh.  Locally, this code can run with the following commands in a Linux-based CLI: 
 
-gcloud auth application-default login
-export PROJECT_ID=<YOUR_PROJECT_ID>
-export LOCATION=<YOUR_PROJECT_LOCATION>
-export GCS_BUCKET=<YOUR_GCS_BUCKET>
-export ENV=dev
-fastapi dev main.py
+- gcloud auth application-default login
+- export PROJECT_ID=<YOUR_PROJECT_ID>
+- export LOCATION=<YOUR_PROJECT_LOCATION>
+- export GCS_BUCKET=<YOUR_GCS_BUCKET>
+- export ENV=dev
+- fastapi dev main.py
 
 ## Requirements
 - A project with access to the following:
