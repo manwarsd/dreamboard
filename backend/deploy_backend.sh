@@ -68,18 +68,21 @@ create_service_account() {
        --member "serviceAccount:$SERVICE_ACCOUNT" \
        --role roles/servicemanagement.serviceController
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$SERVICE_ACCOUNT" \
-    --role roles/servicemanagement.serviceController
+        --member "serviceAccount:$SERVICE_ACCOUNT" \
+        --role roles/servicemanagement.serviceController
     # Compute service account permissions
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role roles/storage.objectViewer
+        --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+        --role roles/storage.objectViewer
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role roles/logging.logWriter
+        --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+        --role roles/logging.logWriter
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role roles/artifactregistry.writer
+        --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+        --role roles/artifactregistry.writer
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+        --member "serviceAccount:service-$PROJECT_NUMBER@gcp-sa-aiplatform.iam.gserviceaccount.com" \
+        --role roles/storage.admin
     echo
 }
 
