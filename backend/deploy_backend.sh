@@ -65,11 +65,11 @@ create_service_account() {
         --member serviceAccount:$SERVICE_ACCOUNT \
         --role roles/logging.logWriter
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+        --member serviceAccount:$SERVICE_ACCOUNT \
+        --role roles/iam.serviceAccountTokenCreator
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
        --member "serviceAccount:$SERVICE_ACCOUNT" \
        --role roles/servicemanagement.serviceController
-    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-        --member "serviceAccount:$SERVICE_ACCOUNT" \
-        --role roles/servicemanagement.serviceController
     # Compute service account permissions
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
         --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
@@ -105,7 +105,7 @@ redeploy_cloud_run_service_with_espv2() {
     gcloud run deploy $CLOUD_RUN_SERVICE_NAME \
     --region=$LOCATION \
     --image="gcr.io/$GOOGLE_CLOUD_PROJECT/endpoints-runtime-serverless:$ESP_VERSION-$CLOUD_RUN_HOST_NAME-$CONFIG_ID" \
-    --service-account $SERVICE_ACCOUNT_NAME \
+    --service-account $SERVICE_ACCOUNT \
     --timeout 3600 \
     --add-volume name=$VOLUME_NAME,type=cloud-storage,bucket=$BUCKET_NAME \
     --add-volume-mount volume=$VOLUME_NAME,mount-path=$MOUNT_PATH \
