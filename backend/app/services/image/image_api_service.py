@@ -198,6 +198,7 @@ class ImageService:
                 'negative_prompt': scene.creative_dir.negative_prompt,
                 'language': scene.creative_dir.language,
                 'output_compression_quality': compression_quality,
+                'include_rai_reason': True,
             }
 
             # Call the Imagen API to edit the image.
@@ -223,6 +224,7 @@ class ImageService:
                     scene.creative_dir.output_compression_quality
                 ),
                 'enhance_prompt': scene.creative_dir.enhance_prompt,
+                'include_rai_reason': True,
             }
 
             # Call the Imagen API to generate new images.
@@ -231,6 +233,10 @@ class ImageService:
                 prompt=scene.img_prompt,
                 config=types.GenerateImagesConfig(**generate_config_params),
             )
+
+        responsible_AI_reason = response.generated_images[0].rai_filtered_reason
+        if responsible_AI_reason:
+            raise ValueError(responsible_AI_reason)
 
         # Extract generated image data from the API response.
         image_parts = [image.image for image in response.generated_images]
@@ -250,6 +256,5 @@ class ImageService:
             logging.debug(
                 "Scene Id: %s, image_uri: %s", scene_id, scene_img_uri
             )
-
 
 image_service = ImageService()
