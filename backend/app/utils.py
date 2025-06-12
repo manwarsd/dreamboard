@@ -17,6 +17,7 @@
 import os
 from concurrent import futures
 import google.cloud.logging as gcp_logging
+from services import storage_service
 
 
 # Attach the Cloud Logging handler to the Python root logger
@@ -126,7 +127,7 @@ def get_scene_folder_path_from_uri(uri: str):
         The extracted scene folder path.
     """
     uri_paths = uri.split("/")
-    if os.getenv("ENV") == 'dev':
+    if os.getenv("ENV") == "dev":
         scene_folder_path = uri_paths[len(uri_paths) - 2]
     else:
         scene_folder_path = uri_paths[len(uri_paths) - 3]
@@ -331,17 +332,20 @@ def get_full_path_from_uri(uri: str):
 
 
 def get_signed_uri_from_gcs_uri(uri: str):
-    """
-    Converts a GCS URI to a signed URI.
+    """Converts a full GCS URI into a temporary signed URL.
+
+    This is a convenience function that takes a GCS URI (e.g., 'gs://...'),
+    extracts the blob name, and then generates a v4 signed URL for it.
 
     Args:
-        uri: The GCS URI (e.g., "gs://my-bucket/path/to/file").
+        uri (str): The complete GCS URI for the desired object.
 
     Returns:
-        A signed URI (e.g.,
-        "https://storage.mtls.cloud.google.com/my-bucket/path/to/file").
+        str: A temporary, publicly accessible signed URL to download the object.
     """
-    return uri.replace("gs://", "https://storage.mtls.cloud.google.com/")
+    blob_name = get_blob_name_from_gcs_uri(uri)
+    url = storage_service.storage_service.generate_signed_url(blob_name)
+    return url
 
 
 def get_gcs_uri_from_signed_uri(uri: str):
@@ -356,6 +360,21 @@ def get_gcs_uri_from_signed_uri(uri: str):
         The GCS URI (e.g., "gs://my-bucket/path/to/file").
     """
     return uri.replace("https://storage.mtls.cloud.google.com/", "gs://")
+
+
+def get_blob_name_from_gcs_uri(gcs_uri: str) -> str:
+    """Extracts the blob name from a GCS URI.
+
+    Strips the bucket prefix from the given URI string, returning only the
+    object's path. Relies on the 'GCS_BUCKET' environment variable.
+
+    Args:
+        gcs_uri (str): The full GCS URI (e.g., 'gs://bucket/object/name.txt').
+
+    Returns:
+        str: The name of the blob (e.g., 'object/name.txt').
+    """
+    return gcs_uri.replace(f"gs://{os.getenv("GCS_BUCKET")}/", "")
 
 
 def execute_tasks_in_parallel(tasks: list[any]) -> None:
