@@ -41,7 +41,10 @@ class ImageGenerator:
         """Initializes the ImageGenerator instance."""
         pass
 
-    def generate_images_from_scene(self, story_id: str, segments: request_models.SceneSegments):
+    def generate_images_from_scene(
+            self, story_id: str,
+            segments: request_models.SceneSegments
+    ):
         """
         Processes each scene within a `SceneSegments` object for image
         generation or editing.

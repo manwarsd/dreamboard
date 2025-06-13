@@ -22,8 +22,8 @@ and uploads to Google Cloud Storage.
 
 import logging
 import datetime
-from fastapi import APIRouter, File, UploadFile
-from fastapi.responses import JSONResponse, Response
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.responses import JSONResponse
 from models.image import image_request_models
 from models.image.image_gen_models import ImageGenerationResponse, UploadedFile
 from services.image import image_generator
@@ -73,15 +73,10 @@ def generate_image(
         gen_status = image_generator.image_generator.generate_images_from_scenes(
             story_id, image_requests
         )
+        return gen_status
     except Exception as ex:
-        logging.error("ERROR - image generation %s", str(ex))
-
-        return Response(
-            content=f"ERROR: {str(ex)}.  Please try again.",
-            status_code=500,
-        )
-    return gen_status
-
+        logging.error("DreamBoard - IMAGE_GEN_ROUTES: - ERROR: %s", str(ex))
+        raise HTTPException(status_code=500, detail=str(ex)) from ex
 
 @image_gen_router.post("/download_image")
 async def download_image(image_uri: str):
@@ -106,13 +101,8 @@ async def download_image(image_uri: str):
         return JSONResponse(content=response)
 
     except Exception as ex:
-        logging.error("ERROR - image upload %s", str(ex))
-
-        return Response(
-            content=f"ERROR: {str(ex)}.  Please try again.",
-            status_code=500,
-        )
-
+        logging.error("DreamBoard - IMAGE_GEN_ROUTES: - IMAGE UPLOAD ERROR: %s", str(ex))
+        raise HTTPException(status_code=500, detail=str(ex)) from ex
 
 @image_gen_router.post("/upload_image")
 async def upload_image(storage_folder_name: str,
@@ -184,13 +174,10 @@ async def upload_image(storage_folder_name: str,
         }
 
     except Exception as ex:
-        logging.error("ERROR - image upload %s", str(ex))
-
-        return Response(
-            content=f"ERROR: {str(ex)}.  Please try again.",
-            status_code=500,
+        logging.error(
+            "DreamBoard - IMAGE_GEN_ROUTES: - IMAGE UPLOAD ERROR: %s", str(ex)
         )
-
+        raise HTTPException(status_code=500, detail=str(ex)) from ex
 
 @image_gen_router.post("/upload_file/{story_id}")
 async def upload_file(story_id: str,
@@ -240,9 +227,8 @@ async def upload_file(story_id: str,
 
         return uploaded_file
     except Exception as ex:
-        logging.error("DreamBoard - VIDEO_GEN_ROUTES: - ERROR: %s", str(ex))
-
-        return Response(
-            content=f"ERROR: {str(ex)}. Please try again.",
-            status_code=500,
+        logging.error(
+            "DreamBoard - IMAGE_GEN_ROUTES: - UPLOAD FILE ERROR: %s", str(ex)
         )
+        raise HTTPException(status_code=500, detail=str(ex)) from ex
+
