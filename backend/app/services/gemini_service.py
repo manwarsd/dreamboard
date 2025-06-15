@@ -32,7 +32,7 @@ class LLMParameters:
     """
 
     model_name: str = "gemini-2.5-flash-preview-04-17"
-    location: str = "us-central1"
+    location: str = os.getenv("LOCATION")
     modality: dict = field(default_factory=lambda: {"type": "TEXT"})
     system_instructions: str = ""
     generation_config: dict = field(

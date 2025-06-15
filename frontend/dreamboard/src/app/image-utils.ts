@@ -39,7 +39,7 @@ export function getNewImageSettings() {
     compressionQuality: 75,
     language: 'en',
     safetyFilterLevel: 'block_only_high',
-    personGeneration: 'allow_adult',
+    personGeneration: 'allow_all',
     seed: -1,
     negativePrompt: '',
     selectedImageForVideo: undefined,

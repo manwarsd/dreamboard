@@ -393,7 +393,10 @@ export class SceneBuilderComponent {
     };
     this.scenes.forEach((scene: VideoScene) => {
       // Check if videos are generated and one is selected for merge
-      if (!this.isVideoGenerated(scene)) {
+      if (
+        !this.isVideoGenerated(scene) &&
+        scene.videoGenerationSettings.includeVideoSegment
+      ) {
         validations['scenesWithNoGeneratedVideo'].push(scene.number);
       }
       // Check prompt required
