@@ -343,10 +343,26 @@ def get_signed_uri_from_gcs_uri(uri: str):
     Returns:
         str: A temporary, publicly accessible signed URL to download the object.
     """
-    blob_name = get_blob_name_from_gcs_uri(uri)
-    url = storage_service.storage_service.generate_signed_url(blob_name)
+    if os.getenv("ENV") == "dev":
+        url = get_mtls_uri_from_gcs_uri(uri)
+    else:
+        blob_name = get_blob_name_from_gcs_uri(uri)
+        url = storage_service.storage_service.generate_signed_url(blob_name)
     return url
 
+
+def get_mtls_uri_from_gcs_uri(uri: str):
+    """
+    Converts a GCS URI back to a sign mtls URI.
+
+    Args:
+        uri: The GCS URI (e.g., "gs://my-bucket/path/to/file").
+
+    Returns:
+        The signed mtls URI (e.g.,
+             "https://storage.mtls.cloud.google.com/my-bucket/path/to/file").
+    """
+    return uri.replace("gs://", "https://storage.mtls.cloud.google.com/")
 
 def get_gcs_uri_from_signed_uri(uri: str):
     """
