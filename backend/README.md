@@ -1,6 +1,6 @@
 # DreamBoard Backend Code
 
-This directory contains the backend code to run the AI text/image/video generation services of DreamBoard.  The code is to be deployed on GCP as a Cloud Function and accessed as an API.
+This directory contains the backend code to run the AI text/image/video generation services of DreamBoard.  The code is to be deployed on GCP as a Cloud Run Service and accessed as an API.  The backend is FastAPI-based and can run individually as an API server without the frontend.
 
 # Structure
 
@@ -14,28 +14,33 @@ The general folder structure is as follows under backend/app:
 - services: Actual code that runs the generation.
 - tests: Directory for test cases.
 
-# Installation
-Installation on production is done by deploying deploy_backend.sh.  Locally, this code can run with the following commands in a Linux-based CLI: 
+## Requirements
+- A Google Cloud Platform project with access to the following:
+  - Veo3
+  - Imagen4
+  - Gemini
+  - Cloud Storage FUSE
+  - Cloud Storage Bucket - to store the image and video results
+- A service account to invoke Cloud Run Service, start AI generation, and other associated compute access.  Please see the deploy_backend.sh script for specific service account permissions
+- Deployment individual to have permission to the following:
+  - Build Cloud Run Service
+  - Create Cloud Storage Buckets
+  - Enable APIs
+  - Create service account and apply IAM permissions (if creating at deployment time)
 
+
+# Installation
+DreamBoard can be deployed on a laptop for personal use or on Google Cloud as Cloud Run Service.  In Google Cloud, the backend server code can be deployed by running deploy_backend.sh in the backend folder.  Please review the file before deploying and update any settings if you wish to change the name of items such as the service account name, service name, or bucket name.  Follow the prompts to create the service.  Make note of the following items for use in deploying the frontend:
+- GCP Project Id
+- Cloud Storage Bucket Name
+- Location
+- Cloud Service Name Deployed
+
+Locally, this code can run with the following commands in a Linux-based CLI (change directory to backend directory first):
+- pip install -r requirements.txt
 - gcloud auth application-default login
 - export PROJECT_ID=<YOUR_PROJECT_ID>
 - export LOCATION=<YOUR_PROJECT_LOCATION>
 - export GCS_BUCKET=<YOUR_GCS_BUCKET>
 - export ENV=dev
 - fastapi dev main.py
-
-## Requirements
-- A project with access to the following:
-  - Veo3
-  - Imagen4
-  - Gemini
-  - Cloud Storage FUSE
-  - Cloud Storage Bucket
-- A service account to run the Cloud Function and AI generation.
-- A GCS bucket created to store the image and video results.
-
-
-## Install and Setup Requirements
-
-## Update Config Settings and Install Into GCP
-Edit Line 135-142 deploy_backend.sh with the information from the previous step.
