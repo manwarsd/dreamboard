@@ -14,10 +14,11 @@
 
 """Service that interacts with the Google Cloud Storage API."""
 
-import os
-import logging
 import base64
 import datetime
+import logging
+import os
+
 import google.auth
 from google.cloud import storage
 

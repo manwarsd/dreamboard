@@ -20,9 +20,9 @@ to represent various entities related to image generation and file handling,
 particularly in the context of the Imagen API.
 """
 
+import enum
 from dataclasses import dataclass
 from typing import List, Optional
-import enum
 
 
 @dataclass

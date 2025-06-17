@@ -19,15 +19,15 @@ This class provides methods for sending requests to and receiving responses
 from the Veo API.
 """
 
-import os
 import logging
+import os
 import time
+
+import utils
 from google import genai
 from google.genai.types import GenerateVideosConfig, Image
-from models.video.video_gen_models import VideoGenerationResponse, Video
 from models.video import video_request_models
-import utils
-
+from models.video.video_gen_models import Video, VideoGenerationResponse
 
 DEFAULT_MODEL_NAME = "veo-3.0-generate-preview"
 # "veo-2.0-generate-001"

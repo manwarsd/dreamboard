@@ -20,17 +20,17 @@ and storage services, including health checks, image creation, downloads,
 and uploads to Google Cloud Storage.
 """
 
-import logging
 import datetime
-from fastapi import APIRouter, File, HTTPException, UploadFile
+import logging
+from typing import Annotated
+
+import utils
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from models.image import image_request_models
 from models.image.image_gen_models import ImageGenerationResponse, UploadedFile
-from services.image.image_generator import ImageGenerator
-from typing import Annotated
-from fastapi import Depends
 from services import storage_service
-import utils
+from services.image.image_generator import ImageGenerator
 
 # Initialize the FastAPI router for image generation endpoints.
 image_gen_router = APIRouter(prefix="/image_generation")

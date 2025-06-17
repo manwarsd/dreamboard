@@ -20,11 +20,13 @@ This file defines Pydantic models that validate and structure incoming request
 data for the API, particularly for image generation and video scene management.
 """
 
-from typing import Optional
-from typing import List
-from pydantic import BaseModel
+from typing import List, Optional
+
 from google.genai import types
+from pydantic import BaseModel
+
 from models.image import image_gen_models
+
 
 class CreativeDirection(BaseModel):
     """

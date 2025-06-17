@@ -22,6 +22,7 @@ direction, and transitions.
 """
 
 from enum import Enum
+
 from pydantic import BaseModel
 
 

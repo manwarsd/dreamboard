@@ -21,7 +21,9 @@ video assets and structured responses from video generation APIs.
 """
 
 from dataclasses import dataclass, field
+
 from models.video import video_request_models
+
 
 @dataclass
 class Video:

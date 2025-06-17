@@ -19,14 +19,15 @@ This class provides methods for sending requests to and receiving responses
 from the Imagen API.
 """
 
-import time
-import os
 import logging
+import os
+import time
 from typing import List
+
 from google import genai
 from google.genai import types
 from models import request_models
-from models.image.image_gen_models import ImageReference, IMAGE_REFERENCE_TYPES
+from models.image.image_gen_models import IMAGE_REFERENCE_TYPES, ImageReference
 from utils import get_images_bucket_path
 
 

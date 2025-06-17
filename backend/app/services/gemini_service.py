@@ -17,12 +17,13 @@
 import os
 import time
 from dataclasses import dataclass, field
+
 import vertexai
-from vertexai import generative_models
-from vertexai.preview.generative_models import HarmCategory, HarmBlockThreshold
-from google.api_core.exceptions import ResourceExhausted
 from google import genai
+from google.api_core.exceptions import ResourceExhausted
 from google.genai import types
+from vertexai import generative_models
+from vertexai.preview.generative_models import HarmBlockThreshold, HarmCategory
 
 
 @dataclass

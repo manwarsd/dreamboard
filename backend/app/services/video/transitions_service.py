@@ -20,13 +20,13 @@ various video transitions using MoviePy, including crossfade, wipe, zoom,
 blur, and warp effects.
 """
 
+import cv2
 import numpy as np
 from moviepy import editor
 from scipy import ndimage
 
 # for warping images:
 from skimage.transform import resize
-import cv2
 
 
 class TransitionsService:

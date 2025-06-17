@@ -20,11 +20,9 @@ routers from various functional areas (video, image, and text generation)
 into a single, unified API.
 """
 from dotenv import load_dotenv
-
 from fastapi import routing
-from api.endpoints import video_gen_routes
-from api.endpoints import image_gen_routes
-from api.endpoints import text_gen_routes
+
+from api.endpoints import image_gen_routes, text_gen_routes, video_gen_routes
 
 load_dotenv()
 

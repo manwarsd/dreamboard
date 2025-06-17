@@ -21,11 +21,12 @@ API calls, and the structuring of responses.
 """
 
 import logging
+
 import utils
-from services.image import image_api_service
 from models import request_models
 from models.image import image_request_models
 from models.image.image_gen_models import Image, ImageGenerationResponse
+from services.image import image_api_service
 
 
 class ImageGenerator:

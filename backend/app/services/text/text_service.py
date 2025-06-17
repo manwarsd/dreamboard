@@ -14,13 +14,14 @@
 
 """Provides a service for interacting with the Gemini API for text generation."""
 
-import time
-import os
 import logging
+import os
+import time
 from dataclasses import dataclass, field
+
 from google import genai
-from google.genai import types
 from google.api_core import exceptions
+from google.genai import types
 
 
 @dataclass

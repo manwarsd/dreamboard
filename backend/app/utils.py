@@ -16,9 +16,9 @@
 
 import os
 from concurrent import futures
+
 import google.cloud.logging as gcp_logging
 from services import storage_service
-
 
 # Attach the Cloud Logging handler to the Python root logger
 logging_client = gcp_logging.Client()

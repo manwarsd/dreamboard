@@ -21,12 +21,13 @@ generating/enhancing image and video prompts.
 """
 
 import logging
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import Response
-from services.text.text_generator import TextGenerator
 from models.text import text_request_models
 from models.text.text_gen_models import SceneItem
-from typing import Annotated
+from services.text.text_generator import TextGenerator
 
 
 def instantiate_text_generator() -> TextGenerator:

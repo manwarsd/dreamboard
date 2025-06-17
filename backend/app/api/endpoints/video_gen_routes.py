@@ -21,15 +21,14 @@ using the Veo platform.
 """
 
 import logging
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from models import request_models
 from models.video import video_request_models
 from models.video.video_gen_models import VideoGenerationResponse
 from services.video.video_generator import VideoGenerator
-from typing import Annotated
-from fastapi import Depends
-
 
 # Initialize the FastAPI router for video generation endpoints.
 video_gen_router = APIRouter(prefix="/video_generation")

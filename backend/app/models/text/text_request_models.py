@@ -21,7 +21,8 @@ payloads related to text generation, including brainstorming scenes and
 handling various prompt-related operations.
 """
 
-from typing import Optional, List
+from typing import List, Optional
+
 from pydantic import BaseModel
 
 

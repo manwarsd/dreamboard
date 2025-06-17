@@ -23,6 +23,7 @@ for robust validation and environment variable management.
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
     """
     Defines the application's configurable settings.

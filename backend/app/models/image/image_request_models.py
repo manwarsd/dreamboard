@@ -20,8 +20,8 @@ This file defines Pydantic models specifically for structuring incoming
 request payloads related to image generation via the API Router.
 """
 
-from pydantic import BaseModel
 from models import request_models
+from pydantic import BaseModel
 
 
 class ImageRequest(BaseModel):
