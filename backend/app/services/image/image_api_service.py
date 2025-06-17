@@ -27,9 +27,7 @@ from google import genai
 from google.genai import types
 from models import request_models
 from models.image.image_gen_models import ImageReference, IMAGE_REFERENCE_TYPES
-from utils import (
-    get_images_bucket_path
-)
+from utils import get_images_bucket_path
 
 
 class ImageService:
@@ -56,8 +54,7 @@ class ImageService:
             location=os.getenv("LOCATION"),
         )
 
-    def _create_reference_objects(self,
-                                  reference_images: List[ImageReference]):
+    def _create_reference_objects(self, reference_images: List[ImageReference]):
         """
         Converts a list of custom ImageReference objects into Imagen
         API-compatible reference image objects.
@@ -82,8 +79,9 @@ class ImageService:
         for ref in reference_images:
             # Check if the reference image is provided as bytes or a GCS URI.
             if ref.image_bytes is not None:
-                ref_image = types.Image(mime_type=ref.mime_type,
-                                        image_bytes=ref.image_bytes)
+                ref_image = types.Image(
+                    mime_type=ref.mime_type, image_bytes=ref.image_bytes
+                )
             elif ref.gcs_uri:
                 ref_image = types.Image.from_file(location=ref.gcs_uri)
             else:
@@ -95,8 +93,8 @@ class ImageService:
             match ref.reference_type:
                 case IMAGE_REFERENCE_TYPES.RAW.value:
                     current_reference = types.RawReferenceImage(
-                        reference_id=ref.reference_id,
-                        reference_image=ref_image)
+                        reference_id=ref.reference_id, reference_image=ref_image
+                    )
                 case IMAGE_REFERENCE_TYPES.MASK.value:
                     current_reference = types.MaskReferenceImage(
                         reference_id=ref.reference_id,
@@ -104,8 +102,8 @@ class ImageService:
                         config=types.MaskReferenceConfig(
                             mask_mode=ref.mask_mode,
                             mask_dilation=ref.mask_dilation,
-                            segmentation_classes=ref.segmentation_classes
-                        )
+                            segmentation_classes=ref.segmentation_classes,
+                        ),
                     )
                 case IMAGE_REFERENCE_TYPES.STYLE.value:
                     current_reference = types.StyleReferenceImage(
@@ -113,26 +111,26 @@ class ImageService:
                         config=types.StyleReferenceConfig(
                             style_description=ref.description
                         ),
-                        reference_image=ref_image
+                        reference_image=ref_image,
                     )
                 case IMAGE_REFERENCE_TYPES.CONTROLLED.value:
-                    current_reference= types.ControlReferenceImage(
+                    current_reference = types.ControlReferenceImage(
                         reference_id=ref.reference_id,
                         config=types.ControlReferenceConfig(
                             control_type=ref.reference_subtype,
-                            enable_control_image_computation=ref.enable_control_image_computation
+                            enable_control_image_computation=ref.enable_control_image_computation,
                         ),
-                        reference_image=ref_image
+                        reference_image=ref_image,
                     )
                 case IMAGE_REFERENCE_TYPES.SUBJECT.value:
-                    current_reference=types.SubjectReferenceImage(
+                    current_reference = types.SubjectReferenceImage(
                         reference_id=ref.reference_id,
                         # reference_type=ref.reference_subtype,
                         reference_image=ref_image,
                         config=types.SubjectReferenceConfig(
                             subject_type=ref.reference_subtype,
-                            subject_description=ref.description
-                        )
+                            subject_description=ref.description,
+                        ),
                     )
                 case _:
                     # TODO: Log a warning or raise an error for unsupported
@@ -170,9 +168,7 @@ class ImageService:
                 f"{get_images_bucket_path(generation_id)}/{scene.scene_num}"
             )
 
-        logging.info(
-            "Starting image generation for folder %s...", output_gcs_uri
-        )
+        logging.info("Starting image generation for folder %s...", output_gcs_uri)
 
         if scene.use_reference_image_for_image:
             # Prepare reference image objects if editing an existing image.
@@ -183,48 +179,48 @@ class ImageService:
             # Determine image compression quality based on content type.
             compression_quality = (
                 None
-                if scene.image_content_type == 'image/png'
+                if scene.image_content_type == "image/png"
                 else scene.creative_dir.output_compression_quality
             )
 
             # Define configuration parameters for image editing.
             edit_config_params = {
-                'edit_mode': scene.edit_mode,
-                'number_of_images': scene.creative_dir.number_of_images,
-                'person_generation': scene.creative_dir.person_generation,
-                'aspect_ratio': scene.creative_dir.aspect_ratio,
-                'safety_filter_level': scene.creative_dir.safety_filter_level,
-                'output_gcs_uri': output_gcs_uri,
-                'negative_prompt': scene.creative_dir.negative_prompt,
-                'language': scene.creative_dir.language,
-                'output_compression_quality': compression_quality,
-                'include_rai_reason': True,
+                "edit_mode": scene.edit_mode,
+                "number_of_images": scene.creative_dir.number_of_images,
+                "person_generation": scene.creative_dir.person_generation,
+                "aspect_ratio": scene.creative_dir.aspect_ratio,
+                "safety_filter_level": scene.creative_dir.safety_filter_level,
+                "output_gcs_uri": output_gcs_uri,
+                "negative_prompt": scene.creative_dir.negative_prompt,
+                "language": scene.creative_dir.language,
+                "output_compression_quality": compression_quality,
+                "include_rai_reason": True,
             }
 
             # Call the Imagen API to edit the image.
             response = self.client.models.edit_image(
-                model='imagen-3.0-capability-001',
+                model="imagen-3.0-capability-001",
                 prompt=scene.img_prompt,
                 reference_images=ref_images,
-                config=types.EditImageConfig(**edit_config_params)
+                config=types.EditImageConfig(**edit_config_params),
             )
 
         else:
             # Define configuration parameters for image generation.
             generate_config_params = {
-                'number_of_images': scene.creative_dir.number_of_images,
-                'output_mime_type': scene.creative_dir.output_mime_type,
-                'person_generation': scene.creative_dir.person_generation,
-                'aspect_ratio': scene.creative_dir.aspect_ratio,
-                'safety_filter_level': scene.creative_dir.safety_filter_level,
-                'output_gcs_uri': output_gcs_uri,
-                'negative_prompt': scene.creative_dir.negative_prompt,
-                'language': scene.creative_dir.language,
-                'output_compression_quality': (
+                "number_of_images": scene.creative_dir.number_of_images,
+                "output_mime_type": scene.creative_dir.output_mime_type,
+                "person_generation": scene.creative_dir.person_generation,
+                "aspect_ratio": scene.creative_dir.aspect_ratio,
+                "safety_filter_level": scene.creative_dir.safety_filter_level,
+                "output_gcs_uri": output_gcs_uri,
+                "negative_prompt": scene.creative_dir.negative_prompt,
+                "language": scene.creative_dir.language,
+                "output_compression_quality": (
                     scene.creative_dir.output_compression_quality
                 ),
-                'enhance_prompt': scene.creative_dir.enhance_prompt,
-                'include_rai_reason': True,
+                "enhance_prompt": scene.creative_dir.enhance_prompt,
+                "include_rai_reason": True,
             }
 
             # Call the Imagen API to generate new images.
@@ -253,8 +249,4 @@ class ImageService:
             scene.scene_id.append(scene_id)
             scene.image_uri.append(scene_img_uri)
             scene.image_content_type = part.mime_type
-            logging.debug(
-                "Scene Id: %s, image_uri: %s", scene_id, scene_img_uri
-            )
-
-image_service = ImageService()
+            logging.debug("Scene Id: %s, image_uri: %s", scene_id, scene_img_uri)

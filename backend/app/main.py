@@ -13,12 +13,17 @@
 # limitations under the License.
 
 """API Entry point where the app and routers are set up."""
-
+import logging
 from fastapi import FastAPI
 import uvicorn
 from starlette.middleware import cors
 from api.router import api_router
 from core.config import settings
+
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename="myapp.log", level=logging.INFO)
+
 
 # Initialize FastAPI app
 app = FastAPI(

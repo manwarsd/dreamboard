@@ -39,6 +39,7 @@ class VeoAPIService:
     def __init__(self):
         """Initializes the VeoAPIService."""
         # Initialize the Generative AI client with project and location.
+        print("OS Variable is: ", os.getenv("PROJECT_ID"))
         self.client = genai.Client(
             vertexai=True,
             project=os.getenv("PROJECT_ID"),
@@ -196,7 +197,3 @@ class VeoAPIService:
                 videos=[],
                 video_segment=video_segment,
             )
-
-
-# Create a global instance of the VeoAPIService
-veo_api_service = VeoAPIService()

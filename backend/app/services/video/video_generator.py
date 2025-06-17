@@ -46,7 +46,7 @@ class VideoGenerator:
     def generate_videos_from_scenes(
         self,
         story_id: str,
-        video_generation: video_request_models.VideoGenerationRequest
+        video_generation: video_request_models.VideoGenerationRequest,
     ) -> list[VideoGenerationResponse]:
         """
         Generates a video from video segments using Veo.
@@ -64,8 +64,7 @@ class VideoGenerator:
             to a generated video segment.
         """
         logging.info(
-            "DreamBoard - VIDEO_GENERATOR: Generating video segments "
-            "for story %s",
+            "DreamBoard - VIDEO_GENERATOR: Generating video segments " "for story %s",
             story_id,
         )
 
@@ -146,8 +145,9 @@ class VideoGenerator:
                 pass
 
     def generate_video_segments(
-        self, video_segments: list[video_request_models.VideoSegmentRequest],
-        story_id: str
+        self,
+        video_segments: list[video_request_models.VideoSegmentRequest],
+        story_id: str,
     ) -> list[VideoGenerationResponse]:
         """
         Generates individual video segments using the Veo API.
@@ -217,7 +217,7 @@ class VideoGenerator:
     def merge_videos(
         self,
         story_id: str,
-        video_generation: video_request_models.VideoGenerationRequest
+        video_generation: video_request_models.VideoGenerationRequest,
     ) -> VideoGenerationResponse | None:
         """
         Merges generated video segments to create a single final video.
@@ -302,8 +302,7 @@ class VideoGenerator:
         )
 
         logging.info(
-            "DreamBoard - VIDEO_GENERATOR: %s videos were merged "
-            "successfully!",
+            "DreamBoard - VIDEO_GENERATOR: %s videos were merged " "successfully!",
             len(gcs_fuse_paths_to_merge),
         )
         video_gen_response = VideoGenerationResponse(
@@ -316,9 +315,7 @@ class VideoGenerator:
                 Video(
                     name=final_video_name,
                     gcs_uri=final_video_uri,
-                    signed_uri=utils.get_signed_uri_from_gcs_uri(
-                        final_video_uri
-                    ),
+                    signed_uri=utils.get_signed_uri_from_gcs_uri(final_video_uri),
                     gcs_fuse_path=final_video_gcs_fuse_path,
                     mime_type="video/mp4",
                     frames_uris=[],
@@ -363,9 +360,7 @@ class VideoGenerator:
 
             # Change name for the final video if it's the last merge
             if len(gcs_fuse_paths) == 1:
-                formatted_date = datetime.datetime.now().strftime(
-                    "%d-%m-%Y:%H:%M:%S"
-                )
+                formatted_date = datetime.datetime.now().strftime("%d-%m-%Y:%H:%M:%S")
                 merged_video_name = f"final_video_{formatted_date}.mp4"
                 final_video_path = f"{output_folder}/{merged_video_name}"
 
@@ -526,8 +521,7 @@ class VideoGenerator:
             slide_trans.write_videofile(f"{final_video_path}", fps=24)
         if transition_type == video_request_models.VideoTransition.SLIDE_WARP.value:
             slide_warp_trans = transitions.slide_warp(
-                clip1, clip2, duration=1.0, speed_curve="sigmoid",
-                stretch_intensity=0.3
+                clip1, clip2, duration=1.0, speed_curve="sigmoid", stretch_intensity=0.3
             )
             # Write transitions to video files
             slide_warp_trans.write_videofile(f"{final_video_path}", fps=24)
@@ -551,7 +545,3 @@ class VideoGenerator:
             `False` otherwise.
         """
         return len(video_gen_responses) > 1
-
-
-# Create a global instance of the VideoGenerator
-video_generator = VideoGenerator()

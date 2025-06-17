@@ -81,7 +81,7 @@ prompts = {
       """,
     },
     "CREATE_IMAGE_PROMPT_FROM_SCENE": {
-      "SYSTEM_INSTRUCTIONS": """
+        "SYSTEM_INSTRUCTIONS": """
         You a world-class creative director fused with an expert AI prompt engineer.
         Your sole purpose is to translate written narrative scene descriptions into masterfully crafted, single-string prompts
         suitable for a cutting-edge text-to-image AI model.
@@ -141,20 +141,16 @@ prompts = {
           providing a stark textural contrast to the smooth walls and the figure's ethereal attire. The atmosphere is serene and
           otherworldly, merging futuristic organic design, soft internal lighting, delicate fashion, and hints of a misty exterior world.
       """,
-      "PROMPT": """
+        "PROMPT": """
         Task: Transform the given scene description into a highly effective, single prompt suitable for image generation and
         for creating a storyboard concept.
 
         Scene Description: {scene_description}
-        """
+        """,
     },
-
-     "PROMPT_ENHANCEMENTS" {
-     }
-
-    "PROMPT_ENHANCEMENTS" {
-      "ENHANCE_IMAGE_PROMPT": {
-      "SYSTEM_INSTRUCTIONS": """
+    "PROMPT_ENHANCEMENTS": {
+        "ENHANCE_IMAGE_PROMPT": {
+            "SYSTEM_INSTRUCTIONS": """
         You are an expert Text-to-Image Prompt Engineer and a highly skilled visual storyteller. Your primary goal is to take
         a concise, user-provided conceptual prompt and transform it into an exceptionally detailed, vivid, and technically optimized
         text prompt suitable for advanced text-to-image generative AI models.
@@ -220,7 +216,7 @@ prompts = {
             providing a stark textural contrast to the smooth walls and the figure's ethereal attire. The atmosphere is serene and
             otherworldly, merging futuristic organic design, soft internal lighting, delicate fashion, and hints of a misty exterior world.
       """,
-      "PROMPT": """
+            "PROMPT": """
         Task: Take an initial, often brief, image prompt and transform it into a highly detailed, evocative, and technically
         optimized prompt suitable for a cutting-edge text-to-image models.
 
@@ -233,10 +229,10 @@ prompts = {
           cinematic film still, sharp focus, shallow depth of field, award-winning photography, professional DSLR, golden hour.
 
         Image prompt: {image_prompt}.
-      """
-    },
-    "ENHANCE_VIDEO_PROMPT": {
-      "SYSTEM_INSTRUCTIONS": """
+      """,
+        },
+        "ENHANCE_VIDEO_PROMPT": {
+            "SYSTEM_INSTRUCTIONS": """
           You are an advanced AI assistant specializing in crafting highly detailed, structured, and optimized prompts for
           cutting-edge Text-to-Video (T2V) generative AI models. Your primary function is to transform and enhance a high-level
           video prompt (provided by the user) into a precise, actionable, and visually rich prompt designed to generate a
@@ -307,7 +303,7 @@ prompts = {
           The output should be a single block of text using the exact section identifiers below. Do not include any conversational 
           filler, introductory sentences, or concluding remarks beyond the generated structured prompt itself.
   """,
-    "PROMPT": """
+            "PROMPT": """
       Task: Enhance the provided prompt "{video_prompt}" into a highly detailed, multi-modal, and optimized prompt for generating a 
       segment of a video advertisement using a cutting-edge Text-to-Video AI model.
 
@@ -330,9 +326,9 @@ prompts = {
 
       Given Prompt: {video_prompt}
     """,
-    ,
-    "ENHANCE_VIDEO_PROMPT_WITH_SCENE": """
-      
-  """
-    }
+        },
+        "ENHANCE_VIDEO_PROMPT_WITH_SCENE": {
+            "SYSTEM_INSTRUCTIONS": "",
+        },
+    },
 }
