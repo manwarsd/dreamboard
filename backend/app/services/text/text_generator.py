@@ -99,13 +99,13 @@ class TextGenerator:
                         image_prompt=scene_data.get("image_prompt", None),
                     )
                 )
-            logging.info(
-                "DreamBoard - TEXT_GENERATOR: Generated scenes: %s", scenes
-            )
+            logging.info("DreamBoard - TEXT_GENERATOR: Generated scenes: %s", scenes)
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "brainstorm_scenes. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "brainstorm_scenes. Please check."
+                )
             )
 
         return scenes
@@ -137,8 +137,10 @@ class TextGenerator:
             return response.parsed
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "create_image_prompt_from_scene. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "create_image_prompt_from_scene. Please check."
+                )
             )
 
         return ""
@@ -169,8 +171,10 @@ class TextGenerator:
             return response.parsed
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "create_video_prompt_from_scene. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "create_video_prompt_from_scene. Please check."
+                )
             )
 
         return ""
@@ -192,9 +196,7 @@ class TextGenerator:
         image_prompt_key = "IMAGE_PROMPT_ENHANCEMENTS"
         scene_prompts = text_prompts_library.prompts[image_prompt_key]
         scene_prompt_key = "ENHANCE_IMAGE_PROMPT"
-        prompt = scene_prompts[scene_prompt_key].format(
-            image_prompt=image_prompt
-        )
+        prompt = scene_prompts[scene_prompt_key].format(image_prompt=image_prompt)
 
         # Execute the Gemini LLM call.
         gemini = gemini_service.gemini_service
@@ -204,8 +206,10 @@ class TextGenerator:
             return response.parsed
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "enhance_image_prompt. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "enhance_image_prompt. Please check."
+                )
             )
 
         return ""
@@ -237,8 +241,10 @@ class TextGenerator:
             return response.parsed
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "enhance_video_prompt. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "enhance_video_prompt. Please check."
+                )
             )
 
         return ""
@@ -277,8 +283,10 @@ class TextGenerator:
             return response.parsed
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "enhance_image_prompt_with_scene. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "enhance_image_prompt_with_scene. Please check."
+                )
             )
 
         return ""
@@ -317,14 +325,15 @@ class TextGenerator:
             return response.parsed
         else:
             logging.info(
-                ("DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
-                 "enhance_video_prompt_with_scene. Please check.")
+                (
+                    "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+                    "enhance_video_prompt_with_scene. Please check."
+                )
             )
 
         return ""
 
-    def generate_image_prompts_from_scenes(self,
-                                           scenes: list[str]) -> list[str]:
+    def generate_image_prompts_from_scenes(self, scenes: list[str]) -> list[str]:
         """
         Generates individual image prompts for a list of scene descriptions.
 
@@ -339,14 +348,11 @@ class TextGenerator:
         """
         image_prompts = []
         for scene_desc in scenes:
-            image_prompts.append(
-                self.create_image_prompt_from_scene(scene_desc)
-            )
+            image_prompts.append(self.create_image_prompt_from_scene(scene_desc))
 
         return image_prompts
 
-    def generate_video_prompts_from_scenes(self,
-                                           scenes: list[str]) -> list[str]:
+    def generate_video_prompts_from_scenes(self, scenes: list[str]) -> list[str]:
         """
         Generates individual video prompts for a list of scene descriptions.
 
@@ -361,9 +367,7 @@ class TextGenerator:
         """
         video_prompts = []
         for scene_desc in scenes:
-            video_prompts.append(
-                self.create_video_prompt_from_scene(scene_desc)
-            )
+            video_prompts.append(self.create_video_prompt_from_scene(scene_desc))
 
         return video_prompts
 

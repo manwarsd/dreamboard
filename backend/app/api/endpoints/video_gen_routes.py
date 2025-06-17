@@ -26,10 +26,21 @@ from fastapi.responses import Response
 from models import request_models
 from models.video import video_request_models
 from models.video.video_gen_models import VideoGenerationResponse
-from services.video import video_generator
+from services.video.video_generator import VideoGenerator
+from typing import Annotated
+from fastapi import Depends
+
 
 # Initialize the FastAPI router for video generation endpoints.
 video_gen_router = APIRouter(prefix="/video_generation")
+
+
+def instantiate_video_generator() -> VideoGenerator:
+    """For use in generating a VideoGenerator across all video routes"""
+    return VideoGenerator()
+
+
+VideoServiceDep = Annotated[VideoGenerator, Depends(instantiate_video_generator)]
 
 
 @video_gen_router.get("/video_health_check")
@@ -70,6 +81,7 @@ def get_default_video_prompt(scene_segments: list[request_models.SceneSegmentReq
 def generate_videos_from_scenes(
     story_id: str,
     video_generation: video_request_models.VideoGenerationRequest,
+    video_generator: VideoServiceDep,
 ) -> list[VideoGenerationResponse]:
     """
     Generates one or more videos using the Veo platform based on scenes.
@@ -94,7 +106,7 @@ def generate_videos_from_scenes(
             ),
             story_id,
         )
-        video_gen_resps = video_generator.video_generator.generate_videos_from_scenes(
+        video_gen_resps = video_generator.generate_videos_from_scenes(
             story_id, video_generation
         )
 
@@ -108,6 +120,7 @@ def generate_videos_from_scenes(
 def merge_videos(
     story_id: str,
     video_generation: video_request_models.VideoGenerationRequest,
+    video_generator: VideoServiceDep,
 ) -> VideoGenerationResponse:
     """
     Merges a list of previously generated videos into a single video.
@@ -132,9 +145,7 @@ def merge_videos(
             ),
             story_id,
         )
-        video_gen_response = video_generator.video_generator.merge_videos(
-            story_id, video_generation
-        )
+        video_gen_response = video_generator.merge_videos(story_id, video_generation)
         if video_gen_response:
             return video_gen_response
         else:

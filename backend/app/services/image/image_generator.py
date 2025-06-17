@@ -42,8 +42,7 @@ class ImageGenerator:
         pass
 
     def generate_images_from_scene(
-            self, story_id: str,
-            segments: request_models.SceneSegments
+        self, story_id: str, segments: request_models.SceneSegments
     ):
         """
         Processes each scene within a `SceneSegments` object for image
@@ -94,11 +93,11 @@ class ImageGenerator:
                 creative_dir=image.creative_dir,
                 reference_images=image.reference_images,
                 use_reference_image_for_image=image.use_reference_image_for_image,
-                edit_mode=image.edit_mode
+                edit_mode=image.edit_mode,
             )
 
         # Execute image generation for all scenes.
-        image_generator.generate_images_from_scene(story_id, segments)
+        self.generate_images_from_scene(story_id, segments)
 
         image_responses = []
 
@@ -164,7 +163,3 @@ class ImageGenerator:
         )
 
         return image_responses
-
-
-# Create a singleton instance of the ImageGenerator for application-wide use.
-image_generator = ImageGenerator()

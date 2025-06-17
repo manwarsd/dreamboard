@@ -26,12 +26,22 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from models.image import image_request_models
 from models.image.image_gen_models import ImageGenerationResponse, UploadedFile
-from services.image import image_generator
+from services.image.image_generator import ImageGenerator
+from typing import Annotated
+from fastapi import Depends
 from services import storage_service
 import utils
 
 # Initialize the FastAPI router for image generation endpoints.
 image_gen_router = APIRouter(prefix="/image_generation")
+
+
+def instantiate_image_generator() -> ImageGenerator:
+    """For use in generating an ImageGenerator across all image routes"""
+    return ImageGenerator()
+
+
+ImageServiceDep = Annotated[ImageGenerator, Depends(instantiate_image_generator)]
 
 
 @image_gen_router.get("/image_health_check")
@@ -48,7 +58,9 @@ def image_health_check():
 
 @image_gen_router.post("/generate_image/{story_id}")
 def generate_image(
-    story_id: str, image_requests: image_request_models.ImageRequest
+    story_id: str,
+    image_requests: image_request_models.ImageRequest,
+    image_generator: ImageServiceDep,
 ) -> list[ImageGenerationResponse]:
     """
     Generates images based on provided request parameters for a given story.
@@ -70,13 +82,14 @@ def generate_image(
                              generation.
     """
     try:
-        gen_status = image_generator.image_generator.generate_images_from_scenes(
+        gen_status = image_generator.generate_images_from_scenes(
             story_id, image_requests
         )
         return gen_status
     except Exception as ex:
         logging.error("DreamBoard - IMAGE_GEN_ROUTES: - ERROR: %s", str(ex))
         raise HTTPException(status_code=500, detail=str(ex)) from ex
+
 
 @image_gen_router.post("/download_image")
 async def download_image(image_uri: str):
@@ -101,12 +114,14 @@ async def download_image(image_uri: str):
         return JSONResponse(content=response)
 
     except Exception as ex:
-        logging.error("DreamBoard - IMAGE_GEN_ROUTES: - IMAGE UPLOAD ERROR: %s", str(ex))
+        logging.error(
+            "DreamBoard - IMAGE_GEN_ROUTES: - IMAGE UPLOAD ERROR: %s", str(ex)
+        )
         raise HTTPException(status_code=500, detail=str(ex)) from ex
 
+
 @image_gen_router.post("/upload_image")
-async def upload_image(storage_folder_name: str,
-                       image_file: UploadFile = File(...)):
+async def upload_image(storage_folder_name: str, image_file: UploadFile = File(...)):
     """
     Uploads an image file to a specified GCS bucket folder.
 
@@ -129,19 +144,15 @@ async def upload_image(storage_folder_name: str,
     try:
         # Initialize StorageService with the target folder name.
         image_storage = storage_service.StorageService(
-            storage_folder_name=storage_folder_name)
+            storage_folder_name=storage_folder_name
+        )
 
         # Generate a unique filename using a timestamp for high uniqueness.
-        timestamp = datetime.datetime.now().strftime(
-            "%Y%m%d_%H%M%S_%f"
-        )
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         file_extension = (
-            image_file.filename.split(".")[-1] if "." in image_file.filename
-            else ""
+            image_file.filename.split(".")[-1] if "." in image_file.filename else ""
         )
-        new_filename = (
-            f"{timestamp}.{file_extension}" if file_extension else timestamp
-        )
+        new_filename = f"{timestamp}.{file_extension}" if file_extension else timestamp
 
         image_mime_type = image_file.content_type
         # Read the file content as bytes.
@@ -179,9 +190,9 @@ async def upload_image(storage_folder_name: str,
         )
         raise HTTPException(status_code=500, detail=str(ex)) from ex
 
+
 @image_gen_router.post("/upload_file/{story_id}")
-async def upload_file(story_id: str,
-                      file: UploadFile) -> UploadedFile:
+async def upload_file(story_id: str, file: UploadFile) -> UploadedFile:
     """
     Uploads a generic file to a GCS bucket associated with a story ID.
 
@@ -203,8 +214,10 @@ async def upload_file(story_id: str,
     try:
         file_name = file.filename.strip()
         logging.info(
-            ("DreamBoard - VIDEO_GEN_ROUTES: Starting file upload %s "
-             "for story id %s..."),
+            (
+                "DreamBoard - VIDEO_GEN_ROUTES: Starting file upload %s "
+                "for story id %s..."
+            ),
             file_name,
             story_id,
         )
@@ -227,8 +240,5 @@ async def upload_file(story_id: str,
 
         return uploaded_file
     except Exception as ex:
-        logging.error(
-            "DreamBoard - IMAGE_GEN_ROUTES: - UPLOAD FILE ERROR: %s", str(ex)
-        )
+        logging.error("DreamBoard - IMAGE_GEN_ROUTES: - UPLOAD FILE ERROR: %s", str(ex))
         raise HTTPException(status_code=500, detail=str(ex)) from ex
-
