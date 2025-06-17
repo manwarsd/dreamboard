@@ -19,7 +19,53 @@
  *
  ***************************************************************************/
 
-.brainstorm-container {
+.brainstorming {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+
+  .campaign-setup {
+    width: 30%;
+    padding: 15px;
+    margin-right: 10px;
+    border: 1px dotted rgb(196, 193, 193);
+  }
+
+  .stories {
+    width: 70%;
+    padding: 15px;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .button-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      margin-right: 5px;
+    }
+  }
+
+  .generate-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .selection-buttons {
+    display: flex;
+    justify-content: center;
+
+    button {
+      margin-left: 5px;
+    }
+  }
+}
+
+/*.brainstorm-container {
   width: 75%;
   margin: 48px auto;
 }
@@ -69,3 +115,4 @@ h2 {
 .export-scenes-button {
   margin-top: 16px;
 }
+*/

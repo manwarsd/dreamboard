@@ -218,3 +218,28 @@ export function parseVideoGenerationErrors(error: any) {
 
   return errorMsg;
 }
+
+export function getVideoFormats() {
+  return [
+    {
+      displayName: 'Shorts',
+      value: 'shorts',
+    },
+    {
+      displayName: 'TrueView In-Stream',
+      value: 'trueview_in_stream',
+    },
+    {
+      displayName: 'Skippable In-Stream',
+      value: 'skippable_in_stream',
+    },
+    {
+      displayName: 'Non Skippable In-Stream',
+      value: 'non_skippable_in_stream',
+    },
+    {
+      displayName: 'Bumper',
+      value: 'bumper',
+    },
+  ];
+}

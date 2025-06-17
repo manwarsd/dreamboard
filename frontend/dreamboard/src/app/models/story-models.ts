@@ -19,48 +19,32 @@
  *
  ***************************************************************************/
 
-import { ImageGenerationSettings } from './image-gen-models';
-import { VideoGenerationSettings } from './video-gen-models';
+import { Scene, SceneItem } from "./scene-models"
 
-export interface Scene {
-  id: string;
-  number: number;
-  description: string;
-  imagePrompt: string;
+export interface Story {
+  id: string
+  title: string;
+  description: string
+  abcdAdherence: string
+  scenes: Scene[]
 }
 
-export interface SceneItem {
-  id: string;
-  number: number;
-  description: string;
-  image_prompt: string;
-}
-
-export interface VideoScene {
-  id: string;
-  number: number;
-  description: string;
-  imageGenerationSettings: ImageGenerationSettings;
-  videoGenerationSettings: VideoGenerationSettings;
-}
-
-export interface ExportScenes {
-  videoScenes: VideoScene[];
-  replaceExistingScenesOnExport: boolean;
-  generateInitialImageForScenes: boolean;
-}
-
-export interface SceneValidations {
-  scenesWithNoGeneratedVideo: number[];
-  invalidTextToVideoScenes: number[];
-  sceneVideosToGenerate: number[];
-  sceneVideosToMerge: number[];
-}
 
 /* Models for backend interactions */
 
-export interface ScenesGenerationRequest {
-  idea: string;
+export interface StoriesGenerationRequest {
+  creative_brief_idea: string;
+  target_audience: string;
   brand_guidelines?: string;
+  video_format: string;
   num_scenes: number;
 }
+
+export interface StoryItem {
+  id: string
+  title: string;
+  description: string
+  abcd_adherence: string
+  scenes: SceneItem[]
+}
+

@@ -21,8 +21,11 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 import { ScenesGenerationRequest } from '../models/scene-models';
+import { StoriesGenerationRequest } from '../models/story-models';
 import { environment } from '../../environments/environment.development';
+import { Title } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +34,78 @@ export class TextGenerationService {
   BASE_URL = environment.textGenerationApiURL;
 
   constructor(private http: HttpClient) {}
+
+  generateStories(storiesGeneration: StoriesGenerationRequest): any {
+    /*return this.http.post<any[]>(
+      `${this.BASE_URL}/generate_stories`,
+      storiesGeneration
+    );*/
+
+    const response = [
+      {
+        id: '123',
+        title: 'A cat in the moon',
+        description: 'Story 1 description',
+        abcd_adherence: 'Attract is good',
+        scenes: [
+          {
+            id: '87967',
+            number: '1',
+            description: 'Scene 1 description',
+            imagePrompt: 'prompt 1',
+          },
+          {
+            id: '45645',
+            number: '2',
+            description: 'Scene 2 description',
+            imagePrompt: 'prompt 2',
+          },
+        ],
+      },
+      {
+        id: '456',
+        title: 'A dog in the sun',
+        description: 'Story 2 description',
+        abcd_adherence: 'Attract is good',
+        scenes: [
+          {
+            id: '34645',
+            number: '1',
+            description: 'Scene 1 description',
+            imagePrompt: 'prompt 1',
+          },
+          {
+            id: '45645',
+            number: '2',
+            description: 'Scene 2 description',
+            imagePrompt: 'prompt 2',
+          },
+        ],
+      },
+      {
+        id: '789',
+        title: 'Cats and dogs',
+        description: 'Story 3 description',
+        abcd_adherence: 'Attract is good',
+        scenes: [
+          {
+            id: '45645',
+            number: '1',
+            description: 'Scene 1 description',
+            imagePrompt: 'prompt 1',
+          },
+          {
+            id: '45645',
+            number: '2',
+            description: 'Scene 2 description',
+            imagePrompt: 'prompt 2',
+          },
+        ],
+      },
+    ];
+
+    return of(response);
+  }
 
   generateScenes(scenesGeneration: ScenesGenerationRequest): any {
     return this.http.post<any[]>(

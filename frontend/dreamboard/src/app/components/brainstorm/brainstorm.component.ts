@@ -49,10 +49,18 @@ import {
   SceneItem,
   ExportScenes,
 } from '../../models/scene-models';
-import { getNewVideoScene } from '../../video-utils';
+import { SelectItem } from '../../models/settings-models';
+import { getNewVideoScene, getVideoFormats } from '../../video-utils';
 import { ComponentsCommunicationService } from '../../services/components-communication.service';
 import { openSnackBar } from '../../utils';
 import { TextGenerationService } from '../../services/text-generation.service';
+import { FileUploaderComponent } from '../file-uploader/file-uploader.component';
+import { StoriesComponent } from '../stories/stories.component';
+import {
+  Story,
+  StoryItem,
+  StoriesGenerationRequest,
+} from '../../models/story-models';
 
 @Component({
   selector: 'app-brainstorm',
@@ -65,11 +73,15 @@ import { TextGenerationService } from '../../services/text-generation.service';
     MatPaginatorModule,
     MatTableModule,
     ReactiveFormsModule,
+    FileUploaderComponent,
+    StoriesComponent,
   ],
   templateUrl: './brainstorm.component.html',
   styleUrl: './brainstorm.component.css',
 })
 export class BrainstormComponent implements AfterViewInit {
+  stories: Story[] = [];
+
   displayedColumns: string[] = [
     'number',
     'description',
@@ -81,6 +93,8 @@ export class BrainstormComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<Scene>(this.scenes);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   private _snackBar = inject(MatSnackBar);
+  videoFormats: SelectItem[] = getVideoFormats();
+
   scenesSettingsForm = new FormGroup({
     idea: new FormControl('', [Validators.required]),
     brandGuidelines: new FormControl('', []),
@@ -192,6 +206,55 @@ export class BrainstormComponent implements AfterViewInit {
     this.componentsCommunicationService.tabChanged(1);
   }
 
+  generateStories(): void {
+    openSnackBar(this._snackBar, 'Generating stories... Please wait.');
+
+    const storiesGeneration = this.getStoriesGenerationParams();
+    this.textGenerationService.generateStories(storiesGeneration).subscribe(
+      (generatedStories: StoryItem[]) => {
+        openSnackBar(
+          this._snackBar,
+          `${generatedStories.length} ${
+            generatedStories.length > 0 ? 'stories' : 'story'
+          } generated successfully!`,
+          20
+        );
+        this.stories = generatedStories.map((genStory: StoryItem) => {
+          const story: Story = {
+            id: genStory.id,
+            title: genStory.title,
+            description: genStory.description,
+            abcdAdherence: genStory.abcd_adherence,
+            scenes: [],
+          };
+          story.scenes = genStory.scenes.map((genScene: SceneItem) => {
+            const scene: Scene = {
+              id: genScene.id,
+              number: genScene.number,
+              description: genScene.description,
+              imagePrompt: genScene.image_prompt,
+            };
+            return scene;
+          });
+          return story;
+        });
+      },
+      (error: any) => {
+        let errorMessage;
+        if (error.error.hasOwnProperty('detail')) {
+          errorMessage = error.error.detail;
+        } else {
+          errorMessage = error.error.message;
+        }
+        console.error(errorMessage);
+        openSnackBar(
+          this._snackBar,
+          `ERROR: ${errorMessage}. Please try again.`
+        );
+      }
+    );
+  }
+
   /**
    * Initiates the generation of new scenes based on the user's idea, brand guidelines,
    * and desired number of scenes.
@@ -220,9 +283,9 @@ export class BrainstormComponent implements AfterViewInit {
         const genScenes: Scene[] = generatedScenes.map(
           (genScene: SceneItem) => {
             return {
+              id: '', // TODO (ae) change this
               number: genScene.number,
               description: genScene.description,
-              brandGuidelinesAlignment: genScene.brand_guidelines_alignment,
               imagePrompt: genScene.image_prompt,
             };
           }
@@ -250,6 +313,18 @@ export class BrainstormComponent implements AfterViewInit {
         );
       }
     );
+  }
+
+  getStoriesGenerationParams() {
+    const storiesGenerationRequest: StoriesGenerationRequest = {
+      creative_brief_idea: '',
+      target_audience: '',
+      brand_guidelines: '',
+      video_format: '',
+      num_scenes: 1
+    };
+
+    return storiesGenerationRequest;
   }
 
   /**
