@@ -131,6 +131,7 @@ class TransitionsService:
         final_clip = editor.CompositeVideoClip([clip1, clip2], use_bgclip=True)
         final_clip = final_clip.set_make_frame(make_frame)
         final_clip = final_clip.set_duration(total_duration)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1.audio, clip2.audio]))
 
         return final_clip
 
@@ -244,6 +245,11 @@ class TransitionsService:
             size=clip1.size
         )
         final_clip = final_clip.set_duration(total_duration)
+
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        clip1_audio= clip1_audio.subclip(0, transition_start)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
         return final_clip
 
@@ -418,6 +424,11 @@ class TransitionsService:
             size=clip1.size,
         )
         final_clip = final_clip.set_duration(total_duration)
+
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        clip1_audio= clip1_audio.subclip(0, transition_start)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
         return final_clip
 
@@ -651,6 +662,11 @@ class TransitionsService:
         )
         final_clip = final_clip.set_duration(total_duration)
 
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        clip1_audio= clip1_audio.subclip(0, transition_start)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+
         return final_clip
 
     def dip_to_black(self, clip1, clip2, transition_duration, speed_curve="sigmoid"):
@@ -745,6 +761,11 @@ class TransitionsService:
             [black_clip, clip1_fadeout, clip2_fadein]
         )
 
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        #clip1_audio= clip1_audio.subclip(0, transition_start)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+
         return final_clip
 
     def concatenate(
@@ -819,6 +840,9 @@ class TransitionsService:
 
         # Concatenate the (potentially trimmed) clips.
         final_clip = editor.concatenate_videoclips([clip1, clip2])
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
         return final_clip
 
@@ -969,6 +993,9 @@ class TransitionsService:
         final_clip = editor.concatenate_videoclips(
             [clip1_blurred, clip2_blurred]
         )
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
         return final_clip
 
@@ -1067,6 +1094,9 @@ class TransitionsService:
                 clip2,           # clip2 unchanged.
             ]
         )
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
         return final_clip
 
@@ -1171,6 +1201,10 @@ class TransitionsService:
         # Create a new clip with the custom frame-making function.
         final_clip = editor.VideoClip(make_frame, duration=total_duration)
 
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        clip1_audio= clip1_audio.subclip(0, clip1.duration - duration)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
         return final_clip
 
     def slide_warp(
@@ -1332,6 +1366,11 @@ class TransitionsService:
 
         # Create a new clip with the custom frame-making function.
         final_clip = editor.VideoClip(make_frame, duration=total_duration)
+
+        clip2_audio = editor.AudioFileClip(clip2.filename)
+        clip1_audio = editor.AudioFileClip(clip1.filename)
+        clip1_audio= clip1_audio.subclip(0, clip1.duration - duration)
+        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
         return final_clip
 
