@@ -134,13 +134,7 @@ class TransitionsService:
 
         return final_clip
 
-    def wipe(
-        self,
-        clip1,
-        clip2,
-        transition_duration,
-        direction="left-to-right"
-    ):
+    def wipe(self, clip1, clip2, transition_duration, direction="left-to-right"):
         """
         Creates a wipe transition between two video clips.
 
@@ -228,8 +222,7 @@ class TransitionsService:
 
         # Create a mask clip using the custom `make_mask_frame` function.
         mask_clip = editor.VideoClip(
-            make_frame=make_mask_frame,
-            duration=total_duration
+            make_frame=make_mask_frame, duration=total_duration
         )
         mask_clip.ismask = True  # Mark it as a mask for MoviePy.
 
@@ -239,10 +232,7 @@ class TransitionsService:
 
         # Create the final composite with the second clip as background
         # and the masked first clip on top.
-        final_clip = editor.CompositeVideoClip(
-            [clip2, clip1_masked],
-            size=clip1.size
-        )
+        final_clip = editor.CompositeVideoClip([clip2, clip1_masked], size=clip1.size)
         final_clip = final_clip.set_duration(total_duration)
 
         return final_clip
@@ -476,14 +466,11 @@ class TransitionsService:
         if not 0.0 <= distortion_factor <= 1.0:
             raise ValueError("distortion_factor must be between 0.0 and 1.0")
         if len(distortion_type) != 2:
-            raise ValueError(
-                "distortion_type must be a list with exactly two elements"
-            )
+            raise ValueError("distortion_type must be a list with exactly two elements")
         for dt in distortion_type:
             if dt not in ["bulge", "pinch"]:
                 raise ValueError(
-                    "distortion_type elements must be either 'bulge' or "
-                    "'pinch'"
+                    "distortion_type elements must be either 'bulge' or " "'pinch'"
                 )
 
         # Define speed curve functions.
@@ -550,10 +537,7 @@ class TransitionsService:
                     )
             else:
                 result = ndimage.map_coordinates(
-                    image,
-                    indices,
-                    order=1,
-                    mode="nearest"
+                    image, indices, order=1, mode="nearest"
                 )
             return result
 
@@ -583,11 +567,7 @@ class TransitionsService:
             x1 = center_x - new_w // 2
             y1 = center_y - new_h // 2
             cropped = frame[y1 : y1 + new_h, x1 : x1 + new_w]
-            resized = resize(
-                cropped,
-                (h, w),
-                preserve_range=True
-            ).astype(frame.dtype)
+            resized = resize(cropped, (h, w), preserve_range=True).astype(frame.dtype)
 
             if distortion_factor > 0:
                 result = apply_distortion(
@@ -677,6 +657,7 @@ class TransitionsService:
         VideoClip
             A new video clip with the transition applied.
         """
+
         # Define the speed curve functions.
         def get_curve_function(curve_type):
             if curve_type == "linear":
@@ -731,9 +712,7 @@ class TransitionsService:
 
         # Create a black clip for the background to dip to.
         black_clip = editor.ColorClip(
-            size=clip1.size,
-            color=(0, 0, 0),
-            duration=(clip1_duration + clip2.duration)
+            size=clip1.size, color=(0, 0, 0), duration=(clip1_duration + clip2.duration)
         )
 
         # Position clip2 to start right after clip1.
@@ -747,13 +726,7 @@ class TransitionsService:
 
         return final_clip
 
-    def concatenate(
-        self,
-        clip1,
-        clip2,
-        trim_end_clip1=None,
-        trim_start_clip2=None
-    ):
+    def concatenate(self, clip1, clip2, trim_end_clip1=None, trim_start_clip2=None):
         """
         Concatenate two video clips with optional trimming.
 
@@ -803,18 +776,14 @@ class TransitionsService:
         if trim_end_clip1:
             end_time_seconds = timestamp_to_seconds(trim_end_clip1)
             if end_time_seconds >= clip1.duration:
-                raise ValueError(
-                    "Trim end time for clip1 exceeds clip duration"
-                )
+                raise ValueError("Trim end time for clip1 exceeds clip duration")
             clip1 = clip1.subclip(0, clip1.duration - end_time_seconds)
 
         # Trim the second clip if `trim_start_clip2` is provided.
         if trim_start_clip2:
             start_time_seconds = timestamp_to_seconds(trim_start_clip2)
             if start_time_seconds >= clip2.duration:
-                raise ValueError(
-                    "Trim start time for clip2 exceeds clip duration"
-                )
+                raise ValueError("Trim start time for clip2 exceeds clip duration")
             clip2 = clip2.subclip(start_time_seconds, clip2.duration)
 
         # Concatenate the (potentially trimmed) clips.
@@ -823,12 +792,7 @@ class TransitionsService:
         return final_clip
 
     def add_blur_transition(
-        self,
-        clip,
-        blur_duration,
-        max_blur_strength=1.0,
-        reverse=False,
-        position="end"
+        self, clip, blur_duration, max_blur_strength=1.0, reverse=False, position="end"
     ):
         """
         Add a gradual blur effect to the start or end of a video clip.
@@ -901,8 +865,7 @@ class TransitionsService:
                 blurred = np.zeros_like(frame)
                 for i in range(3):  # RGB channels.
                     blurred[:, :, i] = ndimage.gaussian_filter(
-                        frame[:, :, i],
-                        sigma=radius
+                        frame[:, :, i], sigma=radius
                     )
                 return blurred
             return frame
@@ -966,9 +929,7 @@ class TransitionsService:
         )
 
         # Concatenate the blurred clips.
-        final_clip = editor.concatenate_videoclips(
-            [clip1_blurred, clip2_blurred]
-        )
+        final_clip = editor.concatenate_videoclips([clip1_blurred, clip2_blurred])
 
         return final_clip
 
@@ -1014,12 +975,10 @@ class TransitionsService:
         # Apply zoom effect (5x) to both frames.
         zoom_factor = 5.0
         zoomed_frame1 = last_frame1.resize(
-            width=last_frame1.w * zoom_factor,
-            height=last_frame1.h * zoom_factor
+            width=last_frame1.w * zoom_factor, height=last_frame1.h * zoom_factor
         )
         zoomed_frame2 = last_frame2.resize(
-            width=last_frame2.w * zoom_factor,
-            height=last_frame2.h * zoom_factor
+            width=last_frame2.w * zoom_factor, height=last_frame2.h * zoom_factor
         )
 
         # Helper function to center crop a clip to target dimensions.
@@ -1029,12 +988,7 @@ class TransitionsService:
             y_center = h // 2
             x1 = max(0, x_center - target_width // 2)
             y1 = max(0, y_center - target_height // 2)
-            return clip.crop(
-                x1=x1,
-                y1=y1,
-                width=target_width,
-                height=target_height
-            )
+            return clip.crop(x1=x1, y1=y1, width=target_width, height=target_height)
 
         # Center and crop the zoomed frames to match original dimensions.
         zoomed_frame1 = center_crop(zoomed_frame1, clip1.w, clip1.h)
@@ -1043,15 +997,16 @@ class TransitionsService:
         # Create a custom blur function using `scipy.ndimage.gaussian_filter`.
         def custom_blur(clip, sigma):
             """Apply gaussian blur to each frame of the clip using scipy."""
+
             def blur_frame(get_frame, t):
                 frame = get_frame(t)
                 blurred = np.zeros_like(frame)
                 for i in range(3):  # RGB channels.
                     blurred[:, :, i] = ndimage.gaussian_filter(
-                        frame[:, :, i],
-                        sigma=sigma
+                        frame[:, :, i], sigma=sigma
                     )
                 return blurred
+
             return clip.fl(blur_frame)
 
         # Apply Gaussian blur to the zoomed frames.
@@ -1061,10 +1016,10 @@ class TransitionsService:
         # Concatenate all clips to form the final flicker transition.
         final_clip = editor.concatenate_videoclips(
             [
-                clip1_main,      # clip1 without last two frames.
+                clip1_main,  # clip1 without last two frames.
                 blurred_frame1,  # first frame with zoom and 100% blur.
                 blurred_frame2,  # second frame with zoom and 50% blur.
-                clip2,           # clip2 unchanged.
+                clip2,  # clip2 unchanged.
             ]
         )
 
@@ -1094,6 +1049,7 @@ class TransitionsService:
         VideoClip
             A composite video clip with the slide transition.
         """
+
         # Define speed curves for position calculation.
         def get_position_function(curve_type):
             if curve_type == "linear":
@@ -1174,12 +1130,7 @@ class TransitionsService:
         return final_clip
 
     def slide_warp(
-        self,
-        clip1,
-        clip2,
-        duration=1.0,
-        speed_curve="sigmoid",
-        stretch_intensity=0.3
+        self, clip1, clip2, duration=1.0, speed_curve="sigmoid", stretch_intensity=0.3
     ):
         """
         Creates a slide transition between two video clips with a warping
@@ -1208,6 +1159,7 @@ class TransitionsService:
         VideoClip
             A composite video clip with the slide and warp transition.
         """
+
         # Define speed curves for position calculation.
         def get_position_function(curve_type):
             if curve_type == "linear":
@@ -1297,16 +1249,8 @@ class TransitionsService:
                     src_points2, dst_points2
                 )
 
-                frame1 = cv2.warpPerspective(
-                    frame1,
-                    transform_matrix1,
-                    (width, height)
-                )
-                frame2 = cv2.warpPerspective(
-                    frame2,
-                    transform_matrix2,
-                    (width, height)
-                )
+                frame1 = cv2.warpPerspective(frame1, transform_matrix1, (width, height))
+                frame2 = cv2.warpPerspective(frame2, transform_matrix2, (width, height))
 
                 # Apply blur to both frames if significant.
                 if blur_amount > 0.5:
@@ -1334,8 +1278,3 @@ class TransitionsService:
         final_clip = editor.VideoClip(make_frame, duration=total_duration)
 
         return final_clip
-
-
-# Create a singleton instance of the TransitionsService for application-wide
-# use.
-transitions_service = TransitionsService()

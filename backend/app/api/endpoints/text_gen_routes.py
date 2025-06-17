@@ -38,7 +38,7 @@ def instantiate_text_generator() -> TextGenerator:
 TextServiceDep = Annotated[TextGenerator, Depends(instantiate_text_generator)]
 
 # Initialize the FastAPI router for text generation endpoints.
-text_gen_router = APIRouter(prefix="/text_generation", dependencies=[Depends()])
+text_gen_router = APIRouter(prefix="/text_generation")
 
 
 @text_gen_router.get("/text_health_check")

@@ -30,7 +30,8 @@ from models.video import video_request_models
 from models.video.video_gen_models import Video, VideoGenerationResponse
 from moviepy import editor
 from services import storage_service
-from services.video import transitions_service, veo_api_service
+from services.video.veo_api_service import VeoAPIService
+from services.video.transitions_service import TransitionsService
 
 
 class VideoGenerator:
@@ -41,7 +42,8 @@ class VideoGenerator:
 
     def __init__(self):
         """Initializes the VideoGenerator class."""
-        pass  # No explicit initialization needed for this class
+        self.veo_api_service = VeoAPIService()
+        self.transitions_service = TransitionsService()
 
     def generate_videos_from_scenes(
         self,
@@ -108,7 +110,7 @@ class VideoGenerator:
             if video_segment.regenerate_video_segment:
                 tasks.append(
                     functools.partial(
-                        veo_api_service.veo_api_service.generate_video,
+                        self.veo_api_service.generate_video,
                         story_id,
                         output_gcs_uri,
                         video_segment,
@@ -179,7 +181,7 @@ class VideoGenerator:
             )
             # Generate only if regenerate_video_segment is True
             if video_segment.regenerate_video_segment:
-                response = veo_api_service.veo_api_service.generate_video(
+                response = self.veo_api_service.generate_video(
                     story_id, output_gcs_uri, video_segment
                 )
                 logging.info(
@@ -459,7 +461,7 @@ class VideoGenerator:
         """
         clip1 = editor.VideoFileClip(video_path1)
         clip2 = editor.VideoFileClip(video_path2)
-        transitions = transitions_service.transitions_service
+        transitions = self.transitions_service
 
         # Create transition by type:
         if transition_type == video_request_models.VideoTransition.X_FADE.value:
