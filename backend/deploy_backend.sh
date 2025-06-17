@@ -65,21 +65,24 @@ create_service_account() {
         --member serviceAccount:$SERVICE_ACCOUNT \
         --role roles/logging.logWriter
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+        --member serviceAccount:$SERVICE_ACCOUNT \
+        --role roles/iam.serviceAccountTokenCreator
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
        --member "serviceAccount:$SERVICE_ACCOUNT" \
        --role roles/servicemanagement.serviceController
-    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$SERVICE_ACCOUNT" \
-    --role roles/servicemanagement.serviceController
     # Compute service account permissions
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role roles/storage.objectViewer
+        --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+        --role roles/storage.objectViewer
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role roles/logging.logWriter
+        --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+        --role roles/logging.logWriter
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role roles/artifactregistry.writer
+        --member "serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+        --role roles/artifactregistry.writer
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+        --member "serviceAccount:service-$PROJECT_NUMBER@gcp-sa-aiplatform.iam.gserviceaccount.com" \
+        --role roles/storage.admin
     echo
 }
 
@@ -90,7 +93,7 @@ deploy_cloud_run_service() {
     --timeout 3600 \
     --add-volume name=$VOLUME_NAME,type=cloud-storage,bucket=$BUCKET_NAME \
     --add-volume-mount volume=$VOLUME_NAME,mount-path=$MOUNT_PATH \
-    --memory 4Gi \
+    --memory 16Gi \
     --set-env-vars PROJECT_ID=$GOOGLE_CLOUD_PROJECT,LOCATION=$LOCATION,GCS_BUCKET=$BUCKET_NAME \
     --allow-unauthenticated # REMOVE
     sleep 180
@@ -102,7 +105,7 @@ redeploy_cloud_run_service_with_espv2() {
     gcloud run deploy $CLOUD_RUN_SERVICE_NAME \
     --region=$LOCATION \
     --image="gcr.io/$GOOGLE_CLOUD_PROJECT/endpoints-runtime-serverless:$ESP_VERSION-$CLOUD_RUN_HOST_NAME-$CONFIG_ID" \
-    --service-account $SERVICE_ACCOUNT_NAME \
+    --service-account $SERVICE_ACCOUNT \
     --timeout 3600 \
     --add-volume name=$VOLUME_NAME,type=cloud-storage,bucket=$BUCKET_NAME \
     --add-volume-mount volume=$VOLUME_NAME,mount-path=$MOUNT_PATH \

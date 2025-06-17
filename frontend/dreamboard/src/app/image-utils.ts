@@ -39,7 +39,7 @@ export function getNewImageSettings() {
     compressionQuality: 75,
     language: 'en',
     safetyFilterLevel: 'block_only_high',
-    personGeneration: 'allow_adult',
+    personGeneration: 'allow_all',
     seed: -1,
     negativePrompt: '',
     selectedImageForVideo: undefined,
@@ -207,9 +207,9 @@ export function updateScenesWithGeneratedImages(
       if (response.done) {
         console.log(
           'Testing after findSceneResponse for images: ' +
-            resps +
+            JSON.stringify(resps) +
             '\n\n Scene: ' +
-            scene
+            JSON.stringify(scene)
         );
         // Setup the images used.
         const genImages: Image[] = response.images.map((image: ImageItem) => {
