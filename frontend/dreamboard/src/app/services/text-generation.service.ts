@@ -51,13 +51,13 @@ export class TextGenerationService {
           {
             id: '87967',
             number: '1',
-            description: 'Scene 1 description',
+            description: 'Story 1 Scene 1 description',
             imagePrompt: 'prompt 1',
           },
           {
             id: '45645',
             number: '2',
-            description: 'Scene 2 description',
+            description: 'Story 1 Scene 2 description',
             imagePrompt: 'prompt 2',
           },
         ],
@@ -71,13 +71,13 @@ export class TextGenerationService {
           {
             id: '34645',
             number: '1',
-            description: 'Scene 1 description',
+            description: 'Story 2 Scene 1 description',
             imagePrompt: 'prompt 1',
           },
           {
             id: '45645',
             number: '2',
-            description: 'Scene 2 description',
+            description: 'Story 2 Scene 2 description',
             imagePrompt: 'prompt 2',
           },
         ],
@@ -91,13 +91,13 @@ export class TextGenerationService {
           {
             id: '45645',
             number: '1',
-            description: 'Scene 1 description',
+            description: 'Story 3 Scene 1 description',
             imagePrompt: 'prompt 1',
           },
           {
-            id: '45645',
+            id: '45656786545',
             number: '2',
-            description: 'Scene 2 description',
+            description: 'Story 3 Scene 2 description',
             imagePrompt: 'prompt 2',
           },
         ],

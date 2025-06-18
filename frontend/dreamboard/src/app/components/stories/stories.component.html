@@ -1,35 +1,51 @@
 <div class="stories-container">
-  <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="start" dynamicHeight>
-    @for (story of stories; track stories; let i = $index) {
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>subject</mat-icon>&nbsp; Story {{ i + 1 }}
-      </ng-template>
+  <form [formGroup]="storiesForm">
+    <mat-tab-group
+      mat-stretch-tabs="true"
+      mat-align-tabs="start"
+      dynamicHeight
+      [(selectedIndex)]="selectedTabIndex"
+      (selectedTabChange)="onTabChanged($event)"
+    >
+      @for (story of stories; track stories; let i = $index) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>subject</mat-icon>&nbsp; Story {{ i + 1 }}
+        </ng-template>
 
-      <h2>{{ story.title }}</h2>
-      <p>
-        {{ story.description }}
-      </p>
+        <h2>{{ story.title }}</h2>
+        <p>
+          {{ story.description }}
+        </p>
 
-      <h3>Scene Breakdown</h3>
-      <div class="scenes-container">
-        @for (scene of story.scenes; track scene; let i = $index) {
-        <mat-card appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Scene {{ i + 1 }}</mat-card-title>
-            <mat-icon>delete</mat-icon>
-            <mat-card-subtitle>Id: {{ scene.id }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ scene.description }}</p>
-          </mat-card-content>
-        </mat-card>
+        <h3>Scene Breakdown</h3>
+        <div class="scenes-container">
+          @for (scenesFormControl of scenesFormControls; track
+          scenesFormControl; let i = $index) {
+          <mat-card appearance="outlined">
+            <mat-card-header>
+              <mat-card-title>Scene {{ i + 1 }}</mat-card-title>
+              <mat-icon>delete</mat-icon>
+              <mat-card-subtitle></mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-form-field>
+                <textarea
+                  matInput
+                  placeholder=""
+                  rows="5"
+                  [formControlName]="scenesFormControl"
+                ></textarea>
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
 
-        }
-      </div>
-      <h3>ABCD aligment</h3>
-      <p> {{ story.abcdAdherence }} </p>
-    </mat-tab>
-    }
-  </mat-tab-group>
+          }
+        </div>
+        <h3>ABCD aligment</h3>
+        <p>{{ story.abcdAdherence }}</p>
+      </mat-tab>
+      }
+    </mat-tab-group>
+  </form>
 </div>

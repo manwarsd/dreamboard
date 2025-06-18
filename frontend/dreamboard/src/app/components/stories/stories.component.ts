@@ -19,26 +19,89 @@
  *
  ***************************************************************************/
 
-import { Component, Input } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
+import { Component, Input, AfterViewInit, SimpleChanges } from '@angular/core';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import {MatCardModule} from '@angular/material/card';
-import {MatDividerModule} from '@angular/material/divider';
-
-
-
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import {
+  ReactiveFormsModule,
+  FormsModule,
+  FormControl,
+  FormRecord,
+} from '@angular/forms';
+import { Scene } from '../../models/scene-models';
 import { Story } from '../../models/story-models';
-
 
 @Component({
   selector: 'app-stories',
-  imports: [MatTabsModule, MatButtonModule, MatIconModule, MatCardModule, MatDividerModule],
+  imports: [
+    MatTabsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatDividerModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './stories.component.html',
-  styleUrl: './stories.component.css'
+  styleUrl: './stories.component.css',
 })
 export class StoriesComponent {
-
   @Input() stories: Story[] = [];
+  storiesForm = new FormRecord({});
+  scenesFormControls: string[] = [];
+  selectedTabIndex: number = 0;
 
+  /**
+   * Lifecycle hook that is called after Angular has fully initialized a component's view.
+   * @returns {void}
+   */
+  ngAfterViewInit(): void {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['stories']) {
+      console.log('myInput changed:', changes['stories'].currentValue);
+      this.initScenesFormControls();
+    }
+  }
+
+  onTabChanged(event: MatTabChangeEvent) {
+    this.selectedTabIndex = event.index;
+    this.updateScenesFormControls();
+  }
+
+  initScenesFormControls() {
+    this.stories.forEach((story: Story, index: number) => {
+      story.scenes.forEach((scene: Scene) => {
+        const controlId = `${story.id}@${scene.id}`;
+        this.storiesForm.addControl(
+          controlId,
+          new FormControl(scene.description)
+        );
+      });
+    });
+    this.updateScenesFormControls();
+  }
+
+  updateScenesFormControls() {
+    const story = this.stories[this.selectedTabIndex];
+    this.scenesFormControls = this.getStoriesControlNames().filter(
+      (control: string) => {
+        const storyId = control.split('@')[0];
+        return storyId === story.id;
+      }
+    );
+  }
+
+  removeStoryFormControlbyId(id: string) {
+    this.storiesForm.removeControl(id);
+  }
+
+  getStoriesControlNames(): string[] {
+    return Object.keys(this.storiesForm.controls);
+  }
 }
