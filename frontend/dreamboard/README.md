@@ -33,10 +33,10 @@ To install it on GCP:
     - Location the service is deployed
     - Cloud Run Service Name
 2. Navigate to the frontend folder and run deploy_frontend.sh with the following arguments noted from the previous step in the following order:
-    a. **GCP Project ID**
-    b. **Cloud Storage Bucket Name**
-    c. **Location to deploy**
-    d. **Cloud Run Service Name**
+   a. **GCP Project ID**
+   b. **Cloud Storage Bucket Name**
+   c. **Location to deploy**
+   d. **Cloud Run Service Name**
 
 ## Installing Locally
 
