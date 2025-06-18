@@ -21,11 +21,12 @@ API calls, and the structuring of responses.
 """
 
 import logging
+
 import utils
-from services.image import image_api_service
 from models import request_models
 from models.image import image_request_models
 from models.image.image_gen_models import Image, ImageGenerationResponse
+from services.image.image_api_service import ImageService
 
 
 class ImageGenerator:
@@ -39,11 +40,10 @@ class ImageGenerator:
 
     def __init__(self):
         """Initializes the ImageGenerator instance."""
-        pass
+        self.image_service = ImageService()
 
     def generate_images_from_scene(
-            self, story_id: str,
-            segments: request_models.SceneSegments
+        self, story_id: str, segments: request_models.SceneSegments
     ):
         """
         Processes each scene within a `SceneSegments` object for image
@@ -60,7 +60,7 @@ class ImageGenerator:
 
         for scene in segments.get_scenes():
             logging.debug("\n%s\n", scene)  # Log the scene details.
-            image_api_service.image_service.generate_image(story_id, scene)
+            self.image_service.generate_image(story_id, scene)
 
     def generate_images_from_scenes(
         self, story_id: str, image_requests: image_request_models.ImageRequest
@@ -94,11 +94,11 @@ class ImageGenerator:
                 creative_dir=image.creative_dir,
                 reference_images=image.reference_images,
                 use_reference_image_for_image=image.use_reference_image_for_image,
-                edit_mode=image.edit_mode
+                edit_mode=image.edit_mode,
             )
 
         # Execute image generation for all scenes.
-        image_generator.generate_images_from_scene(story_id, segments)
+        self.generate_images_from_scene(story_id, segments)
 
         image_responses = []
 
@@ -164,7 +164,3 @@ class ImageGenerator:
         )
 
         return image_responses
-
-
-# Create a singleton instance of the ImageGenerator for application-wide use.
-image_generator = ImageGenerator()

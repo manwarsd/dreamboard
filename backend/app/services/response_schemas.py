@@ -35,7 +35,12 @@ RESPONSE_SCHEMAS = {
                 },
             },
             # Required fields for each scene object
-            "required": ["number", "description", "image_prompt", "video_prompt"],
+            "required": [
+                "number",
+                "description",
+                "image_prompt",
+                "video_prompt",
+            ],
         },
     },
     # Schema for creating scenes with brand guideline alignment
@@ -55,19 +60,17 @@ RESPONSE_SCHEMAS = {
                 },
                 "image_prompt": {
                     "type": "string",  # Prompt for generating an image
-                }
+                },
             },
             # Required fields for each scene object with brand guidelines
             "required": [
                 "number",
                 "description",
                 "brand_guidelines_alignment",
-                "image_prompt"
+                "image_prompt",
             ],
         },
     },
     # Schema for a simple text response
-    "JUST_TEXT": {
-        "type": "string"
-    }
+    "JUST_TEXT": {"type": "string"},
 }
