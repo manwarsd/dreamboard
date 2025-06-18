@@ -32,6 +32,12 @@ api_router = routing.APIRouter()
 # Include specific routers for different functionalities.
 # Each router is tagged for better documentation and organization in
 # the OpenAPI (Swagger UI) interface.
-api_router.include_router(video_gen_routes.video_gen_router, tags=["video_gen_routes"])
-api_router.include_router(image_gen_routes.image_gen_router, tags=["image_gen_routes"])
-api_router.include_router(text_gen_routes.text_gen_router, tags=["text_gen_routes"])
+api_router.include_router(
+    video_gen_routes.video_gen_router, tags=["video_gen_routes"]
+)
+api_router.include_router(
+    image_gen_routes.image_gen_router, tags=["image_gen_routes"]
+)
+api_router.include_router(
+    text_gen_routes.text_gen_router, tags=["text_gen_routes"]
+)

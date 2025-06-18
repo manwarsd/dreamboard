@@ -33,17 +33,17 @@ app = FastAPI(
 
 # Set all CORS enabled origins if specified in settings
 if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        cors.CORSMiddleware,
-        allow_origins=["*"],  # Allows all origins
-        allow_credentials=True,
-        allow_methods=["*"],  # Allows all methods
-        allow_headers=["*"],  # Allows all headers
-    )
+  app.add_middleware(
+      cors.CORSMiddleware,
+      allow_origins=["*"],  # Allows all origins
+      allow_credentials=True,
+      allow_methods=["*"],  # Allows all methods
+      allow_headers=["*"],  # Allows all headers
+  )
 
 # Include the API router with a defined prefix
 app.include_router(api_router, prefix=settings.API_PREFIX)
 
 # Run the Uvicorn server when the script is executed directly
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+  uvicorn.run(app, host="127.0.0.1", port=8000)
