@@ -25,42 +25,42 @@ from dataclasses import dataclass
 
 @dataclass
 class SceneItem:
-    """
-    Represents a single generated scene, typically brainstormed by a text
-    generation model.
+  """
+  Represents a single generated scene, typically brainstormed by a text
+  generation model.
 
-    Attributes:
-        number: The sequential number of the scene.
-        description: A textual description of the scene's content.
-        brand_guidelines_alignment: An optional field indicating how well
-                                    the scene aligns with specified brand
-                                    guidelines.
-        image_prompt: An optional image prompt derived from the scene
-                      description.
-    """
+  Attributes:
+      number: The sequential number of the scene.
+      description: A textual description of the scene's content.
+      brand_guidelines_alignment: An optional field indicating how well
+                                  the scene aligns with specified brand
+                                  guidelines.
+      image_prompt: An optional image prompt derived from the scene
+                    description.
+  """
 
-    number: int
-    description: str
-    brand_guidelines_alignment: str | None = None
-    image_prompt: str | None = None
+  number: int
+  description: str
+  brand_guidelines_alignment: str | None = None
+  image_prompt: str | None = None
 
 
 @dataclass
 class TextGenerationResponse:
-    """
-    Represents the structured response from a text generation API call.
+  """
+  Represents the structured response from a text generation API call.
 
-    Attributes:
-        new_prompt: The newly generated or enhanced text prompt.
-        done: A boolean flag indicating if the generation operation is
-              complete.
-        operation_name: The name of the asynchronous operation, useful for
-                        tracking its status.
-        execution_message: Any message or status detail about the execution
-                           of the text generation.
-    """
+  Attributes:
+      new_prompt: The newly generated or enhanced text prompt.
+      done: A boolean flag indicating if the generation operation is
+            complete.
+      operation_name: The name of the asynchronous operation, useful for
+                      tracking its status.
+      execution_message: Any message or status detail about the execution
+                         of the text generation.
+  """
 
-    new_prompt: str
-    done: bool
-    operation_name: str
-    execution_message: str
+  new_prompt: str
+  done: bool
+  operation_name: str
+  execution_message: str

@@ -35,23 +35,36 @@ The combination of the 3 AI products allows creation of ad videos from concept t
 
 ![DreamBoard Workflow Overview](./images/dreamboard_workflow_overview.png)
 
-DreamBoard is the created as a end-to-end tool for AI-generated videos, based on Gemini, Imagen, and Veo.  Other than using them separately and utilizing each tool separately, the solution is a full workflow that utilizes all 3 at once.  Giving the choice of extra configuration settings from the backend APIs, it gives the user more freedom to get better results and enforce brand consistency using brand guidelines.
+DreamBoard is a tool that can be used for quick storyboarding or end-to-end video production.   It is a tool created for AI-generated videos using a combination of Gemini, Imagen, and Veo with capabilities of:
+- ad brainstorming
+- prompt rewriting
+- text-to-image
+- text-to-video
+- text-and-image-to-image
+- text-and-image-to-video
+- enforcing brand guidelines in image/video
+
+It also includes extra configuration settings from the backend APIs that is mostly occluded from frontend tools, giving users more freedom to get results in the format required.
 
 # How DreamBoard Works
 
-DreamBoard contains a frontend and backend component.  The backend performs all the AI generation functions (text, image, video) and accessed through API calls.  The frontend is an Angular UI that stitches all the workflow steps together.  This decoupling allows developers who want to create their own frontend UI to just use the backend if needed.
+DreamBoard contains a frontend and backend component.  The backend performs all the AI generation functions (text, image, video) and accessed through API calls using FastAPI.  The frontend is an Angular UI that stitches all the workflow steps together.  This decoupling allows developers who are only interested in the backend generation capabilities of DreamBoard to develop their own UI or agents while still using the DreamBoard backend.
 
-# Limitations
+![DreamBoard General Flow](./images/dreamboard-general-flow.png)
 
 # Requirements
 
-Please refer to the README of the backend and frontend individually for requirements.
+Requires a GCP project with billing account enabled and access to Gemini, Imagen, and Veo.
+
+Please refer to the README of the backend and frontend individually for requirements and detailed deployment instructions.
 
 # Get Started
 
-Please refer to the README of the backend and frontend individually for installation instructions.
+Please refer to the README of the backend and frontend individually for installation instructions.  For deployments on GCP, you will need to install the backend before the frontend.
 
 # Pricing and Fees
+
+Please refer to the [generative AI pricing page](https://cloud.google.com/vertex-ai/generative-ai/pricing) for pricing information on Gemini, Imagen, and Veo.  Please use the [pricing calculator](https://cloud.google.com/products/calculator) for cost on other resources used from GCP including Cloud Run Service and Cloud Storage.
 
 # License
 

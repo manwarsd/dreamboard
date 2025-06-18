@@ -20,20 +20,20 @@ This file defines Pydantic models specifically for structuring incoming
 request payloads related to image generation via the API Router.
 """
 
-from pydantic import BaseModel
 from models import request_models
+from pydantic import BaseModel
 
 
 class ImageRequest(BaseModel):
-    """
-    Represents the basic structure for an Imagen API request.
+  """
+  Represents the basic structure for an Imagen API request.
 
-    This model encapsulates a collection of `Scene` objects, where each
-    scene contains the necessary parameters for image generation or editing.
+  This model encapsulates a collection of `Scene` objects, where each
+  scene contains the necessary parameters for image generation or editing.
 
-    Attributes:
-        scenes: A list of `Scene` objects, each defining a specific
-                image generation task.
-    """
+  Attributes:
+      scenes: A list of `Scene` objects, each defining a specific
+              image generation task.
+  """
 
-    scenes: list[request_models.Scene]
+  scenes: list[request_models.Scene]

@@ -1,59 +1,52 @@
-# Dreamboard
+# DreamBoard Frontend Code
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
+This directory contains the frontend code to run the Angular UI of DreamBoard. The code is to be hosted on a Google Cloud Platform (GCP) Cloud Run Service. It can also be run locally. On GCP, The frontend deployment is meant to be run after the backend server code is deployed as it needs to refer to the backend service locations.
 
-## Development server
+# Structure
 
-To start a local development server, run:
+The frontend code is built in Angular. Outside of the configuration and supporting utility files, the source code folder structure in src/app is separated into the following:
 
-```bash
-ng serve
-```
+- components: Contains the various UI components on the DreamBoard app.
+- models: Contains files representing image, video, scene, and other objects used in the UI or for requesting from the backend API.
+- services: Contains all services used to communicate with the backend API and supporting services.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+# Requirements
 
-## Code scaffolding
+- A Google Cloud Platform project to host the Cloud Run Service.
+- Backend API code deployed before the frontend. See requirements of the backend server from the backend README for details.
+- A service account to invoke Cloud Run Service, start AI generation, and other associated compute access. Please see the deploy_backend.sh script for specific service account permissions
+- Deployment individual to have permission to the following:
+  - Build Cloud Run Service
+  - Create Cloud Storage Buckets
+  - Enable APIs
+  - Create service account and apply IAM permissions (if creating at deployment time)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+# Installation
 
-```bash
-ng generate component component-name
-```
+The DreamBoard frontend can be installed locally or on GCP.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Installing on GCP
 
-```bash
-ng generate --help
-```
+To install it on GCP:
 
-## Building
+1. Deploy the backend code and make note of the following when creating :
+   - GCP Project Id
+   - Cloud Storage Bucket Name
+   - Location the service is deployed
+   - Cloud Run Service Name
+2. Navigate to the frontend folder and run deploy_frontend.sh with the following arguments noted from the previous step in the following order:
+   a. **GCP Project ID**
+   b. **Cloud Storage Bucket Name**
+   c. **Location to deploy**
+   d. **Cloud Run Service Name**
 
-To build the project run:
+## Installing Locally
 
-```bash
-ng build
-```
+To install locally on a Linux-based computer, run the following commands in the command line:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+1. `cd frontend/dreamboard`
+2. `npm install`
+3. `ng build`
+4. `ng serve`
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+The application will be available on `http://localhost:4200/`.

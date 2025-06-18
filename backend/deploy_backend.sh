@@ -93,7 +93,7 @@ deploy_cloud_run_service() {
     --timeout 3600 \
     --add-volume name=$VOLUME_NAME,type=cloud-storage,bucket=$BUCKET_NAME \
     --add-volume-mount volume=$VOLUME_NAME,mount-path=$MOUNT_PATH \
-    --memory 4Gi \
+    --memory 16Gi \
     --set-env-vars PROJECT_ID=$GOOGLE_CLOUD_PROJECT,LOCATION=$LOCATION,GCS_BUCKET=$BUCKET_NAME \
     --allow-unauthenticated # REMOVE
     sleep 180
