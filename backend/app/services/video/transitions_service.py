@@ -131,7 +131,10 @@ class TransitionsService:
     final_clip = editor.CompositeVideoClip([clip1, clip2], use_bgclip=True)
     final_clip = final_clip.set_make_frame(make_frame)
     final_clip = final_clip.set_duration(total_duration)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1.audio, clip2.audio]))
+    clip2_audio = editor.AudioFileClip(clip2.filename)
+    clip1_audio = editor.AudioFileClip(clip1.filename)
+    clip1_audio= clip1_audio.subclip(0, transition_start)
+    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 

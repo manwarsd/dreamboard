@@ -22,7 +22,7 @@ transitions between video clips.
 
 import logging
 from moviepy import editor
-from services.video.transitions_service import transitions_service
+from services.video.transitions_service import TransitionsService
 from models.video import video_request_models
 
 
@@ -38,7 +38,7 @@ class EditingService:
         """
         Initializes the EditingService.
         """
-        self._transitions_service = transitions_service
+        self._transitions_service = TransitionsService()
 
     def apply_transition(
         self,

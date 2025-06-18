@@ -43,7 +43,7 @@ class VideoGenerator:
   def __init__(self):
     """Initializes the VideoGenerator class."""
     self.veo_api_service = VeoAPIService()
-    self.transitions_service = EditingService()
+    self.editing_service = EditingService()
 
   def generate_videos_from_scenes(
       self,
@@ -485,12 +485,12 @@ class VideoGenerator:
     elif transition_type == video_request_models.VideoTransition.ZOOM.value:
         final_clip = service.apply_transition(
             clip1,
-                clip2,
-                video_request_models.VideoTransition.ZOOM,
-                transition_duration=0.25,
-                motion_blur=10,
-                speed_curve="linear",
-            )
+            clip2,
+            video_request_models.VideoTransition.ZOOM,
+            transition_duration=0.25,
+            motion_blur=10,
+            speed_curve="linear",
+        )
     elif transition_type == video_request_models.VideoTransition.ZOOM_WARP.value:
         final_clip = service.apply_transition(
             clip1,
