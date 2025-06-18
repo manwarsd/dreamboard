@@ -127,11 +127,11 @@ class TransitionsService:
         weight = 1.0 - curve_func(progress)
         return weight * frame1 + (1 - weight) * frame2
 
-        # Create the final composite clip with the custom make_frame function.
-        final_clip = editor.CompositeVideoClip([clip1, clip2], use_bgclip=True)
-        final_clip = final_clip.set_make_frame(make_frame)
-        final_clip = final_clip.set_duration(total_duration)
-        final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1.audio, clip2.audio]))
+    # Create the final composite clip with the custom make_frame function.
+    final_clip = editor.CompositeVideoClip([clip1, clip2], use_bgclip=True)
+    final_clip = final_clip.set_make_frame(make_frame)
+    final_clip = final_clip.set_duration(total_duration)
+    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1.audio, clip2.audio]))
 
     return final_clip
 
