@@ -22,23 +22,22 @@ and keyword examples for various image elements.
 
 
 def get_template_by_id(id: str):
-    """
-    Retrieves a image prompt template by its unique identifier.
+  """
+  Retrieves a image prompt template by its unique identifier.
 
-    These templates are designed to help users create effective prompts for
-    text-to-image models like Imagen, incorporating best practices for camera
-    motion, composition, subject, action, ambiance, and style.
+  These templates are designed to help users create effective prompts for
+  text-to-image models like Imagen, incorporating best practices for camera
+  motion, composition, subject, action, ambiance, and style.
 
-    Args:
-        id: The identifier of the desired prompt template.
+  Args:
+      id: The identifier of the desired prompt template.
 
-    Returns:
-        A string containing the prompt template, or None if the ID is not
-        found.
-    """
+  Returns:
+      A string containing the prompt template, or None if the ID is not
+      found.
+  """
 
-    templates = {
-        "default_prompt_generation": """
+  templates = {"default_prompt_generation": """
             You are a prompt engineer who is an expert at creating prompts
             for text to video models. Your job is to create a high performing
             prompt for the Veo model to generate a video using the provided
@@ -116,7 +115,6 @@ def get_template_by_id(id: str):
             - Example text-to-video prompt: "Silhouette of a man walking in
             collage of cityscapes Glitch camera effect, close up of woman’s
             face speaking, neon colors"
-        """
-    }
+        """}
 
-    return templates.get(id)
+  return templates.get(id)

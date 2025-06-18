@@ -19,11 +19,12 @@ This module serves as the main entry point for API routing, consolidating
 routers from various functional areas (video, image, and text generation)
 into a single, unified API.
 """
-
+from dotenv import load_dotenv
 from fastapi import routing
-from api.endpoints import video_gen_routes
-from api.endpoints import image_gen_routes
-from api.endpoints import text_gen_routes
+
+from api.endpoints import image_gen_routes, text_gen_routes, video_gen_routes
+
+load_dotenv()
 
 # Create the main API router for the application.
 api_router = routing.APIRouter()
