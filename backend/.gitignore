@@ -2,6 +2,7 @@
 
 # Python
 app/venv
+/env
 **/__pycache__/
 
 # IDEs and editors
