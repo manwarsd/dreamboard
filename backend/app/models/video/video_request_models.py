@@ -42,6 +42,7 @@ class VideoTransition(Enum):
   BLUR = "BLUR"
   SLIDE = "SLIDE"
   SLIDE_WARP = "SLIDE_WARP"
+  FLICKER = "FLICKER"
 
 
 class VideoTransitionRequest(BaseModel):
