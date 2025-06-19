@@ -19,7 +19,13 @@
  *
  ***************************************************************************/
 
-import { Component, Input, AfterViewInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,6 +40,9 @@ import {
 } from '@angular/forms';
 import { Scene } from '../../models/scene-models';
 import { Story } from '../../models/story-models';
+import { getVideoFormats } from '../../video-utils';
+import { SelectItem } from '../../models/settings-models';
+import { ComponentsCommunicationService } from '../../services/components-communication.service';
 
 @Component({
   selector: 'app-stories',
@@ -52,9 +61,17 @@ import { Story } from '../../models/story-models';
 })
 export class StoriesComponent {
   @Input() stories: Story[] = [];
+  @Output() onSelectStoryEvent = new EventEmitter<Story>();
+
+  constructor(
+    private componentsCommunicationService: ComponentsCommunicationService
+  ) {}
+
   storiesForm = new FormRecord({});
-  scenesFormControls: string[] = [];
+  scenesFormControls: Scene[] = [];
   selectedTabIndex: number = 0;
+  selectedStory!: Story;
+  videoFormats: SelectItem[] = getVideoFormats();
 
   /**
    * Lifecycle hook that is called after Angular has fully initialized a component's view.
@@ -64,44 +81,72 @@ export class StoriesComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['stories']) {
-      console.log('myInput changed:', changes['stories'].currentValue);
       this.initScenesFormControls();
     }
   }
 
   onTabChanged(event: MatTabChangeEvent) {
     this.selectedTabIndex = event.index;
-    this.updateScenesFormControls();
+    this.selectedStory = this.stories[this.selectedTabIndex];
   }
 
   initScenesFormControls() {
-    this.stories.forEach((story: Story, index: number) => {
+    // Build dynamic form controls based on generated stories and scenes
+    this.stories.forEach((story: Story) => {
       story.scenes.forEach((scene: Scene) => {
-        const controlId = `${story.id}@${scene.id}`;
         this.storiesForm.addControl(
-          controlId,
+          scene.id, // Id is storyId@sceneId
           new FormControl(scene.description)
         );
       });
     });
-    this.updateScenesFormControls();
+    this.selectedStory = this.stories[this.selectedTabIndex];
   }
 
-  updateScenesFormControls() {
-    const story = this.stories[this.selectedTabIndex];
-    this.scenesFormControls = this.getStoriesControlNames().filter(
-      (control: string) => {
-        const storyId = control.split('@')[0];
-        return storyId === story.id;
+  removeSceneById(event: any) {
+    const sceneId = event.target.parentElement.parentElement.id;
+    const scene = this.getSceneById(sceneId);
+    if (scene && scene.index !== undefined) {
+      // Remove scene from story object
+      this.selectedStory.scenes.splice(scene.index, 1);
+      // Remove scene from form controls
+      this.storiesForm.removeControl(sceneId);
+    }
+  }
+
+  getSceneById(sceneId: string) {
+    let foundIndex;
+    const foundScene = this.selectedStory.scenes.filter(
+      (scene: Scene, index: number) => {
+        if (scene.id === sceneId) {
+          // break loop
+          foundIndex = index;
+          return false;
+        }
+        return true;
       }
     );
-  }
 
-  removeStoryFormControlbyId(id: string) {
-    this.storiesForm.removeControl(id);
+    if (foundScene) {
+      return { index: foundIndex, scene: foundScene };
+    }
+
+    return null;
   }
 
   getStoriesControlNames(): string[] {
     return Object.keys(this.storiesForm.controls);
+  }
+
+  onSelectStory() {
+    this.selectedStory.scenes.forEach((scene: Scene) => {
+      // Form control name is the same as scene id storyId@sceneId
+      scene.description = this.storiesForm.get(scene.id)?.value;
+    });
+    this.onSelectStoryEvent.emit(this.selectedStory);
+  }
+
+  onCreateYourOwnStory() {
+    this.componentsCommunicationService.tabChanged(1);
   }
 }

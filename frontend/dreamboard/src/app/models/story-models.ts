@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 import { Scene, SceneItem } from "./scene-models"
+import { VideoScene } from "./scene-models";
 
 export interface Story {
   id: string
@@ -27,6 +28,20 @@ export interface Story {
   description: string
   abcdAdherence: string
   scenes: Scene[]
+}
+
+export interface VideoStory {
+  id: string
+  title: string;
+  description: string
+  abcdAdherence: string
+  scenes: VideoScene[]
+}
+
+export interface ExportStory {
+  story: VideoStory;
+  replaceExistingStoryOnExport: boolean;
+  generateInitialImageForScenes: boolean;
 }
 
 

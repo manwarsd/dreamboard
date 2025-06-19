@@ -23,6 +23,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Video } from '../models/video-gen-models';
 import { ExportScenes } from '../models/scene-models';
+import { ExportStory } from '../models/story-models';
 import { UploadedFile } from '../models/settings-models';
 
 @Injectable({
@@ -33,6 +34,7 @@ export class ComponentsCommunicationService {
 
   // Observable sources
   private videoGeneratedSource = new Subject<Video>();
+  private storyExportedSource = new Subject<ExportStory>();
   private scenesExportedSource = new Subject<ExportScenes>();
   private tabChangedSource = new Subject<number>();
   private fileUploadedSource = new Subject<UploadedFile>();
@@ -40,6 +42,7 @@ export class ComponentsCommunicationService {
 
   // Observable streams
   videoGenerated$ = this.videoGeneratedSource.asObservable();
+  storyExportedSource$ = this.storyExportedSource.asObservable();
   scenesExportedSource$ = this.scenesExportedSource.asObservable();
   tabChangedSource$ = this.tabChangedSource.asObservable();
   fileUploadedSource$ = this.fileUploadedSource.asObservable();
@@ -48,6 +51,10 @@ export class ComponentsCommunicationService {
 
   videoGenerated(video: Video) {
     this.videoGeneratedSource.next(video);
+  }
+
+  storyExported(exportStory: ExportStory) {
+    this.storyExportedSource.next(exportStory);
   }
 
   scenesExported(exportScenes: ExportScenes) {

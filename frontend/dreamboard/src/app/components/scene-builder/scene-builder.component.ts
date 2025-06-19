@@ -41,7 +41,7 @@ import {
   VideoItem,
   Video,
 } from '../../models/video-gen-models';
-import { ExportScenes } from '../../models/scene-models';
+import { ExportStory } from '../../models/story-models';
 import {
   ImageItem,
   ImageSceneRequest,
@@ -51,12 +51,14 @@ import {
 } from '../../models/image-gen-models';
 import { openSnackBar } from '../../utils';
 import { SceneValidations } from '../../models/scene-models';
+import { VideoStory } from '../../models/story-models';
 import { VideoGenerationService } from '../../services/video-generation.service';
 import { ImageGenerationService } from '../../services/image-generation.service';
 import {
   updateScenesWithGeneratedVideos,
   getNewVideoScene,
 } from '../../video-utils';
+import { getNewVideoStory } from '../../story-utils';
 import { updateScenesWithGeneratedImages } from '../../image-utils';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpResponse } from '@angular/common/http';
@@ -71,10 +73,10 @@ import { ComponentsCommunicationService } from '../../services/components-commun
   styleUrl: './scene-builder.component.css',
 })
 export class SceneBuilderComponent {
-  storyId!: string;
+  story: VideoStory = getNewVideoStory();
   sceneSettingsDialog = inject(MatDialog);
   creativeDirectionSettingsDialog = inject(MatDialog);
-  scenes: VideoScene[] = [];
+  //scenes: VideoScene[] = [];
   exportingScenes: boolean = false;
   private _snackBar = inject(MatSnackBar);
 
@@ -83,24 +85,19 @@ export class SceneBuilderComponent {
     private imageGenerationService: ImageGenerationService,
     private componentsCommunicationService: ComponentsCommunicationService
   ) {
-    componentsCommunicationService.scenesExportedSource$.subscribe(
-      (exportScenes: ExportScenes) => {
+    componentsCommunicationService.storyExportedSource$.subscribe(
+      (exportStory: ExportStory) => {
+        this.story = exportStory.story;
         this.exportingScenes = true;
-        // Generate new story id only when there are not scenes already created
-        if (this.scenes.length === 0) {
-          this.storyId = uuidv4();
-        }
-        if (exportScenes.replaceExistingScenesOnExport) {
-          if (exportScenes.generateInitialImageForScenes) {
-            this.generateImagesFromScenes(true, exportScenes.videoScenes);
+        if (exportStory.replaceExistingStoryOnExport) {
+          if (exportStory.generateInitialImageForScenes) {
+            this.generateImagesFromScenes(true, exportStory.story.scenes);
           } else {
             openSnackBar(this._snackBar, 'Scenes exported successfully!', 5);
-            this.scenes = exportScenes.videoScenes;
             this.exportingScenes = false;
           }
         } else {
           // TODO (ae) remove?
-          this.scenes.push.apply(this.scenes, exportScenes.videoScenes);
         }
       }
     );
@@ -118,7 +115,7 @@ export class SceneBuilderComponent {
       {
         minWidth: '1200px',
         data: {
-          storyId: this.storyId,
+          storyId: this.story.id,
           sceneId: sceneId,
           scene: scene,
         },
@@ -140,8 +137,8 @@ export class SceneBuilderComponent {
         minWidth: '300px',
         minHeight: '250px',
         data: {
-          storyId: this.storyId,
-          scene: this.scenes[transitionIndex],
+          storyId: this.story.id,
+          scene: this.story.scenes[transitionIndex],
         },
       }
     );
@@ -154,11 +151,11 @@ export class SceneBuilderComponent {
    * @returns {void}
    */
   addScene() {
-    const newScene = getNewVideoScene(this.scenes.length);
-    if (this.scenes.length === 0) {
-      this.storyId = uuidv4();
+    if (!this.story) {
+      this.story = getNewVideoStory();
     }
-    this.scenes.push(newScene);
+    const newScene = getNewVideoScene(this.story.scenes.length);
+    this.story.scenes.push(newScene);
   }
 
   /**
@@ -189,9 +186,9 @@ export class SceneBuilderComponent {
     const sceneId = event.target.parentElement.parentElement.id;
     const scene = this.getSceneById(sceneId);
     if (scene) {
-      this.scenes.splice(scene.number - 1, 1);
+      this.story.scenes.splice(scene.number - 1, 1);
       // Update scene numbers with new position in scenes array
-      this.scenes.forEach((scene: VideoScene, index: number) => {
+      this.story.scenes.forEach((scene: VideoScene, index: number) => {
         scene.number = index + 1;
       });
     } else {
@@ -205,7 +202,7 @@ export class SceneBuilderComponent {
    * @returns {VideoScene | null} The found `VideoScene` object, or `null` if no scene with the given ID is found.
    */
   getSceneById(sceneId: string): VideoScene | null {
-    const foundScenes: VideoScene[] = this.scenes.filter(
+    const foundScenes: VideoScene[] = this.story.scenes.filter(
       (scene: VideoScene) => {
         return scene.id === sceneId;
       }
@@ -256,10 +253,10 @@ export class SceneBuilderComponent {
 
     const videoGeneration = this.buildVideoGenerationParams(
       'GENERATE',
-      this.scenes
+      this.story.scenes
     );
     this.videoGenerationService
-      .generateVideosFromScenes(this.storyId, videoGeneration)
+      .generateVideosFromScenes(this.story.id, videoGeneration)
       .subscribe(
         (resps: VideoGenerationResponse[]) => {
           openSnackBar(
@@ -270,7 +267,7 @@ export class SceneBuilderComponent {
           // Find scenes in responses to update generated videos
           const executionStatus = updateScenesWithGeneratedVideos(
             resps,
-            this.scenes
+            this.story.scenes
           );
         },
         (error: any) => {
@@ -330,17 +327,17 @@ export class SceneBuilderComponent {
 
     const videoGeneration = this.buildVideoGenerationParams(
       'MERGE',
-      this.scenes
+      this.story.scenes
     );
 
     this.videoGenerationService
-      .mergeVideos(this.storyId, videoGeneration)
+      .mergeVideos(this.story.id, videoGeneration)
       .subscribe(
         (response: VideoGenerationResponse) => {
           if (response && response.videos.length > 0) {
             openSnackBar(
               this._snackBar,
-              `Videos for Story ${this.storyId} were merged successfully!`,
+              `Videos for Story ${this.story.id} were merged successfully!`,
               10
             );
             const finalVideoReponse = response.videos[0];
@@ -391,7 +388,7 @@ export class SceneBuilderComponent {
       sceneVideosToGenerate: [],
       sceneVideosToMerge: [],
     };
-    this.scenes.forEach((scene: VideoScene) => {
+    this.story.scenes.forEach((scene: VideoScene) => {
       // Check if videos are generated and one is selected for merge
       if (
         !this.isVideoGenerated(scene) &&
@@ -433,19 +430,19 @@ export class SceneBuilderComponent {
     const imageGeneration = this.buildImageGenerationParams(videoScenes);
 
     this.imageGenerationService
-      .generateImage(this.storyId, imageGeneration)
+      .generateImage(this.story.id, imageGeneration)
       .subscribe(
         (resps: HttpResponse<ImageGenerationResponse[]>) => {
           // Find scene in responses to update generated images
           if (resps.body) {
             if (isExport) {
               openSnackBar(this._snackBar, `Scenes exported successfully!`, 15);
-              this.scenes = videoScenes;
+              this.story.scenes = videoScenes;
               this.exportingScenes = false;
             }
             const executionStatus = updateScenesWithGeneratedImages(
               resps.body,
-              this.scenes
+              this.story.scenes
             );
             console.log(executionStatus['succeded']);
           }

@@ -1,25 +1,44 @@
 <div class="brainstorm-container">
-  <form [formGroup]="scenesSettingsForm">
+  <form [formGroup]="storiesSettingsForm">
     <div class="brainstorming">
       <div class="campaign-setup">
-        <app-file-uploader></app-file-uploader>
+        <h2>
+          <mat-icon>auto_fix_high</mat-icon> Brainstorm with Gemini
+          <mat-icon>auto_fix_high</mat-icon>
+        </h2>
+
         <mat-form-field>
           <mat-label>Creative Brief or Idea</mat-label>
-          <textarea matInput placeholder="" rows="6"></textarea>
+          <textarea
+            matInput
+            placeholder=""
+            rows="6"
+            formControlName="creativeBriefIdea"
+          ></textarea>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Target Audience</mat-label>
-          <textarea matInput placeholder="" rows="3"></textarea>
+          <textarea
+            matInput
+            placeholder=""
+            rows="3"
+            formControlName="targetAudience"
+          ></textarea>
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>Brand Guidelines</mat-label>
-          <textarea matInput placeholder="" rows="6"></textarea>
+          <textarea
+            matInput
+            placeholder=""
+            rows="6"
+            formControlName="brandGuidelines"
+          ></textarea>
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>Select Video Format</mat-label>
-          <mat-select name="videoFormat">
+          <mat-select name="videoFormat" formControlName="videoFormat">
             <mat-option value="no-video-fprmat">Select Video Format</mat-option>
             @for (videoFormat of videoFormats; track videoFormat; let i =
             $index) {
@@ -36,24 +55,26 @@
             <mat-icon>upload</mat-icon> Brand Guidelines
           </button>
         </div>
+        <div class="generate-images-check">
+          <mat-checkbox formControlName="generateInitialImageForScenes"
+            >Generate initial scene images on story selection</mat-checkbox
+          >
+        </div>
         <div class="generate-button">
-          <button mat-flat-button (click)="generateStories()">
+          <button
+            mat-flat-button
+            (click)="generateStories()"
+            [disabled]="disableGenerateStoriesButton()"
+          >
             <mat-icon>auto_fix_high</mat-icon> Generate Stories
           </button>
         </div>
       </div>
       <div class="stories">
-        <app-stories [stories]="stories"></app-stories>
-        @if (stories.length > 0) {
-        <div class="selection-buttons">
-          <button mat-flat-button>
-            <mat-icon>arrow_circle_right</mat-icon> Select story
-          </button>
-          <button mat-flat-button>
-            <mat-icon>arrow_circle_right</mat-icon> Create Your Own Story
-          </button>
-        </div>
-        }
+        <app-stories
+          [stories]="stories"
+          (onSelectStoryEvent)="onSelectStoryEvent($event)"
+        ></app-stories>
       </div>
     </div>
   </form>

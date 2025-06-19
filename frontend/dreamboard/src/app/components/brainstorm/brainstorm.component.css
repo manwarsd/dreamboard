@@ -55,14 +55,13 @@
     margin-top: 30px;
   }
 
-  .selection-buttons {
-    display: flex;
-    justify-content: center;
-
-    button {
-      margin-left: 5px;
-    }
+  .generate-images-check {
+    margin-top: 16px;
   }
+}
+
+h2 {
+  text-align: center;
 }
 
 /*.brainstorm-container {

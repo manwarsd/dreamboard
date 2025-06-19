@@ -1,5 +1,5 @@
 <div class="scene-builder-container">
-  @if (scenes.length === 0) {
+  @if (story.scenes.length === 0) {
   <div class="initial-add-scene">
     <div>
       <p>Get started by adding a scene!</p>
@@ -33,9 +33,9 @@
       Merge Videos
     </button>
   </div>
-  <p class="story-id">Story ID: {{ storyId }}</p>
+  <p class="story-id">Story ID: {{ story.id }}</p>
   <div class="scenes-container">
-    @for (scene of scenes; track scene; let i = $index) {
+    @for (scene of story.scenes; track scene; let i = $index) {
     <mat-card class="scene-card" appearance="outlined" [id]="scene.id">
       <mat-card-header>
         <mat-icon (click)="removeScene($event)">delete</mat-icon>
@@ -71,7 +71,7 @@
         <button mat-button (click)="editScene($event)">EDIT</button>
       </mat-card-actions>
     </mat-card>
-    @if (i + 1 < scenes.length) {
+    @if (i + 1 < story.scenes.length) {
     <mat-icon class="transition" (click)="openTransitionsSettingsDialog(i)"
       >settings</mat-icon
     >
