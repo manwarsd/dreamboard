@@ -105,4 +105,19 @@ class TextService:
                 raise ValueError("Total fade duration cannot exceed text duration.")
             text_clip = text_clip.fadein(fade_duration).fadeout(fade_duration)
 
-        return editor.CompositeVideoClip([clip, text_clip])
+        if isinstance(clip, editor.CompositeVideoClip):
+            # If the base clip is already a composite, add the new text clip to its
+            # list of clips to avoid inefficient nesting.
+            clips_to_compose = clip.clips + [text_clip]
+        else:
+            # Otherwise, create a new list with the base clip and the text overlay.
+            clips_to_compose = [clip, text_clip]
+
+        composite_clip = editor.CompositeVideoClip(clips_to_compose, size=clip.size)
+
+        # Explicitly set the audio from the original clip to the new composite clip
+        # to ensure it's always preserved.
+        if clip.audio:
+            composite_clip.audio = clip.audio
+
+        return composite_clip
