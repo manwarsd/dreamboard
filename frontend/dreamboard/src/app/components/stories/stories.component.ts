@@ -94,9 +94,15 @@ export class StoriesComponent {
     // Build dynamic form controls based on generated stories and scenes
     this.stories.forEach((story: Story) => {
       story.scenes.forEach((scene: Scene) => {
+        // Add Scene Description form control
         this.storiesForm.addControl(
-          scene.id, // Id is storyId@sceneId
+          `description@${scene.id}`,
           new FormControl(scene.description)
+        );
+        // Add Image Prompt form control
+        this.storiesForm.addControl(
+          `imagePrompt@${scene.id}`,
+          new FormControl(scene.imagePrompt)
         );
       });
     });
@@ -141,7 +147,12 @@ export class StoriesComponent {
   onSelectStory() {
     this.selectedStory.scenes.forEach((scene: Scene) => {
       // Form control name is the same as scene id storyId@sceneId
-      scene.description = this.storiesForm.get(scene.id)?.value;
+      scene.description = this.storiesForm.get(
+        `description@${scene.id}`
+      )?.value;
+      scene.imagePrompt = this.storiesForm.get(
+        `imagePrompt@${scene.id}`
+      )?.value;
     });
     this.onSelectStoryEvent.emit(this.selectedStory);
   }

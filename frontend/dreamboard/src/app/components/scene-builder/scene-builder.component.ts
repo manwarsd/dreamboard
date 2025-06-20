@@ -194,6 +194,10 @@ export class SceneBuilderComponent {
     } else {
       console.log('Video Scene not found. No scene to remove.');
     }
+    if(this.story.scenes.length === 0) {
+      // If all scenes removed, create new story
+      this.story = getNewVideoStory();
+    }
   }
 
   /**

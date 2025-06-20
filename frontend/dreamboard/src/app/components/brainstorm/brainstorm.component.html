@@ -39,7 +39,6 @@
         <mat-form-field>
           <mat-label>Select Video Format</mat-label>
           <mat-select name="videoFormat" formControlName="videoFormat">
-            <mat-option value="no-video-fprmat">Select Video Format</mat-option>
             @for (videoFormat of videoFormats; track videoFormat; let i =
             $index) {
             <mat-option [value]="videoFormat.value" [id]="i.toString()">{{

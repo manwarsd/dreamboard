@@ -36,75 +36,10 @@ export class TextGenerationService {
   constructor(private http: HttpClient) {}
 
   generateStories(storiesGeneration: StoriesGenerationRequest): any {
-    /*return this.http.post<any[]>(
-      `${this.BASE_URL}/generate_stories`,
+    return this.http.post<any[]>(
+      `${this.BASE_URL}/brainstorm_stories`,
       storiesGeneration
-    );*/
-
-    const response = [
-      {
-        id: '123',
-        title: 'A cat in the moon',
-        description: 'Story 1 description',
-        abcd_adherence: 'Attract is good',
-        scenes: [
-          {
-            id: '87967',
-            number: '1',
-            description: 'Story 1 Scene 1 description',
-            imagePrompt: 'prompt 1',
-          },
-          {
-            id: '45645',
-            number: '2',
-            description: 'Story 1 Scene 2 description',
-            imagePrompt: 'prompt 2',
-          },
-        ],
-      },
-      {
-        id: '456',
-        title: 'A dog in the sun',
-        description: 'Story 2 description',
-        abcd_adherence: 'Attract is good',
-        scenes: [
-          {
-            id: '34645',
-            number: '1',
-            description: 'Story 2 Scene 1 description',
-            imagePrompt: 'prompt 1',
-          },
-          {
-            id: '45645',
-            number: '2',
-            description: 'Story 2 Scene 2 description',
-            imagePrompt: 'prompt 2',
-          },
-        ],
-      },
-      {
-        id: '789',
-        title: 'Cats and dogs',
-        description: 'Story 3 description',
-        abcd_adherence: 'Attract is good',
-        scenes: [
-          {
-            id: '45645',
-            number: '1',
-            description: 'Story 3 Scene 1 description',
-            imagePrompt: 'prompt 1',
-          },
-          {
-            id: '45656786545',
-            number: '2',
-            description: 'Story 3 Scene 2 description',
-            imagePrompt: 'prompt 2',
-          },
-        ],
-      },
-    ];
-
-    return of(response);
+    );
   }
 
   generateScenes(scenesGeneration: ScenesGenerationRequest): any {

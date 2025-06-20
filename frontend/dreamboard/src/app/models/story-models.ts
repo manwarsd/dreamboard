@@ -19,23 +19,24 @@
  *
  ***************************************************************************/
 
-import { Scene, SceneItem } from "./scene-models"
-import { VideoScene } from "./scene-models";
+import { Scene, SceneItem } from './scene-models';
+import { VideoScene } from './scene-models';
 
 export interface Story {
-  id: string
+  id: string;
   title: string;
-  description: string
-  abcdAdherence: string
-  scenes: Scene[]
+  description: string;
+  brandGuidelinesAdherence: string;
+  abcdAdherence: string;
+  scenes: Scene[];
 }
 
 export interface VideoStory {
-  id: string
+  id: string;
   title: string;
-  description: string
-  abcdAdherence: string
-  scenes: VideoScene[]
+  description: string;
+  abcdAdherence: string;
+  scenes: VideoScene[];
 }
 
 export interface ExportStory {
@@ -44,10 +45,10 @@ export interface ExportStory {
   generateInitialImageForScenes: boolean;
 }
 
-
 /* Models for backend interactions */
 
 export interface StoriesGenerationRequest {
+  num_stories: number;
   creative_brief_idea: string;
   target_audience: string;
   brand_guidelines?: string;
@@ -56,10 +57,10 @@ export interface StoriesGenerationRequest {
 }
 
 export interface StoryItem {
-  id: string
+  id: string;
   title: string;
-  description: string
-  abcd_adherence: string
-  scenes: SceneItem[]
+  description: string;
+  brand_guidelines_adherence: string;
+  abcd_adherence: string;
+  scenes: SceneItem[];
 }
-

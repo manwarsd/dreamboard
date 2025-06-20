@@ -163,12 +163,17 @@ export class BrainstormComponent implements AfterViewInit {
     const storiesGeneration = this.getStoriesGenerationParams();
     this.textGenerationService.generateStories(storiesGeneration).subscribe(
       (generatedStories: StoryItem[]) => {
-        openSnackBar(this._snackBar, `Recommended stories generated successfully!`, 15);
+        openSnackBar(
+          this._snackBar,
+          `Recommended stories generated successfully!`,
+          15
+        );
         this.stories = generatedStories.map((genStory: StoryItem) => {
           const story: Story = {
             id: uuidv4(),
             title: genStory.title,
             description: genStory.description,
+            brandGuidelinesAdherence: genStory.brand_guidelines_adherence,
             abcdAdherence: genStory.abcd_adherence,
             scenes: [],
           };
@@ -203,6 +208,7 @@ export class BrainstormComponent implements AfterViewInit {
   getStoriesGenerationParams(): StoriesGenerationRequest {
     const videoFormat = this.storiesSettingsForm.get('videoFormat')?.value!;
     const storiesGenerationRequest: StoriesGenerationRequest = {
+      num_stories: 3, // Default to 3 for now
       creative_brief_idea:
         this.storiesSettingsForm.get('creativeBriefIdea')?.value!,
       target_audience: this.storiesSettingsForm.get('targetAudience')?.value!,
@@ -216,7 +222,7 @@ export class BrainstormComponent implements AfterViewInit {
 
   calculateNumScenesByVideoFormatType(formatType: string): number {
     const videoFormat = this.videoFormats.filter((format: SelectItem) => {
-      format.value === formatType;
+      return format.value === formatType;
     });
     // Calculate num of scenes based on video format length
     if (videoFormat.length > 0) {

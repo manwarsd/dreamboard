@@ -33,9 +33,10 @@
       Merge Videos
     </button>
   </div>
+  <p>Story Title: {{ story.title }}</p>
   <p class="story-id">Story ID: {{ story.id }}</p>
   <div class="scenes-container">
-    @for (scene of story.scenes; track scene; let i = $index) {
+    @for (scene of story.scenes; track scene.id; let i = $index) {
     <mat-card class="scene-card" appearance="outlined" [id]="scene.id">
       <mat-card-header>
         <mat-icon (click)="removeScene($event)">delete</mat-icon>

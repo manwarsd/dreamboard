@@ -1,9 +1,9 @@
 <div class="stories-container">
-     @if(stories.length === 0) {
-      <div class="no-stories">
-        <mat-icon>subject</mat-icon> Your stories will show here.
-      </div>
-    }
+  @if(stories.length === 0) {
+  <div class="no-stories">
+    <mat-icon>subject</mat-icon> Your stories will show here.
+  </div>
+  }
   <form [formGroup]="storiesForm">
     <mat-tab-group
       mat-stretch-tabs="true"
@@ -12,7 +12,6 @@
       [(selectedIndex)]="selectedTabIndex"
       (selectedTabChange)="onTabChanged($event)"
     >
-    asdasdas
       @for (story of stories; track story.id; let i = $index) {
       <mat-tab>
         <ng-template mat-tab-label>
@@ -41,11 +40,21 @@
                 <span>Id: {{ scene.id }}</span>
               </div>
               <mat-form-field>
+                <mat-label>Description</mat-label>
                 <textarea
                   matInput
                   placeholder=""
-                  rows="5"
-                  [formControlName]="scene.id"
+                  rows="3"
+                  [formControlName]="'description@' + scene.id"
+                ></textarea>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Image Prompt</mat-label>
+                <textarea
+                  matInput
+                  placeholder=""
+                  rows="3"
+                  [formControlName]="'imagePrompt@' + scene.id"
                 ></textarea>
               </mat-form-field>
             </mat-card-content>
@@ -53,7 +62,9 @@
 
           }
         </div>
-        <h3>ABCD aligment</h3>
+        <h3>Brand Guidelines Aligment</h3>
+        <p>{{ story.brandGuidelinesAdherence }}</p>
+        <h3>ABCD Aligment</h3>
         <p>{{ story.abcdAdherence }}</p>
       </mat-tab>
       }
