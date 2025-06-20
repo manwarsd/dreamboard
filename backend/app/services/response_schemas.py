@@ -15,6 +15,120 @@
 """Module to define JSON response schemas for Gemini requests."""
 
 RESPONSE_SCHEMAS = {
+    "CREATE_STORIES": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                },
+                "description": {
+                    "type": "string",
+                },
+                "abcd_adherence": {
+                    "type": "string",
+                },
+                "scenes": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "number": {
+                                "type": "integer",  # Scene number
+                            },
+                            "description": {
+                                "type": (
+                                    "string"
+                                ),  # Textual description of the scene
+                            },
+                            "image_prompt": {
+                                "type": (
+                                    "string"
+                                ),  # Prompt for generating an image
+                            },
+                            "video_prompt": {
+                                "type": (
+                                    "string"
+                                ),  # Prompt for generating a video
+                            },
+                        },
+                        # Required fields for each scene object
+                        "required": [
+                            "number",
+                            "description",
+                            "image_prompt",
+                        ],
+                    },
+                },
+            },
+            "required": [
+                "title",
+                "description",
+                "abcd_adherence",
+                "scenes",
+            ],
+        },
+    },
+    "CREATE_STORIES_WITH_BRAND_GUIDELINES": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                },
+                "description": {
+                    "type": "string",
+                },
+                "brand_guidelines_adherence": {
+                    "type": "string",
+                },
+                "abcd_adherence": {
+                    "type": "string",
+                },
+                "scenes": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "number": {
+                                "type": "integer",  # Scene number
+                            },
+                            "description": {
+                                "type": (
+                                    "string"
+                                ),  # Textual description of the scene
+                            },
+                            "image_prompt": {
+                                "type": (
+                                    "string"
+                                ),  # Prompt for generating an image
+                            },
+                            "video_prompt": {
+                                "type": (
+                                    "string"
+                                ),  # Prompt for generating a video
+                            },
+                        },
+                        # Required fields for each scene object
+                        "required": [
+                            "number",
+                            "description",
+                            "image_prompt",
+                        ],
+                    },
+                },
+            },
+            "required": [
+                "title",
+                "description",
+                "brand_guidelines_adherence",
+                "abcd_adherence",
+                "scenes",
+            ],
+        },
+    },
     # Schema for creating new scenes
     "CREATE_SCENES": {
         "type": "array",

@@ -2,8 +2,9 @@
 
 # Python
 app/venv
-/env
+.env
 **/__pycache__/
+app/dreamboard
 
 # IDEs and editors
 .idea/

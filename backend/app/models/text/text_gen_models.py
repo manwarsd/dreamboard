@@ -46,6 +46,18 @@ class SceneItem:
 
 
 @dataclass
+class StoryItem:
+  """Represents a story"""
+
+  id: str
+  title: str
+  description: str
+  brand_guidelines_adherence: str
+  abcd_adherence: str
+  scenes: list[SceneItem]
+
+
+@dataclass
 class TextGenerationResponse:
   """
   Represents the structured response from a text generation API call.
