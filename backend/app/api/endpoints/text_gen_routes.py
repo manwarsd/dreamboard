@@ -23,8 +23,7 @@ generating/enhancing image and video prompts.
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, HTTPException
 from models.text import text_request_models
 from models.text.text_gen_models import SceneItem
 from services.text.text_generator import TextGenerator
@@ -51,6 +50,23 @@ def text_health_check():
   """
 
   return {"status": "Success!"}
+
+
+@text_gen_router.post("/brainstorm_stories")
+def brainstorm_stories(
+    brainstorm_stories_request: text_request_models.StoriesGenerationRequest,
+    text_generator: TextServiceDep,
+):
+  """Brainstorms and generates a list of story ideas based on user input."""
+  try:
+    gen_status = text_generator.brainstorm_stories(brainstorm_stories_request)
+  except Exception as ex:
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-brainstorm_stories: - ERROR: %s", str(ex)
+    )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
+  return gen_status
 
 
 @text_gen_router.post("/brainstorm_scenes")
@@ -82,12 +98,11 @@ def brainstorm_scenes(
         brainstorm_scenes_request.num_scenes,
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-brainstorm_scenes: - ERROR: %s", str(ex)
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -113,12 +128,13 @@ def create_image_prompt_from_scene(
         text_requests.scene
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-create_image_prompt_from_scene: -"
+        " ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -144,12 +160,13 @@ def create_video_prompt_from_scene(
         text_requests.scene
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-create_video_prompt_from_scene: -"
+        " ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -173,12 +190,12 @@ def enhance_image_prompt(
   try:
     gen_status = text_generator.enhance_image_prompt(text_requests.prompt)
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-enhance_image_prompt: - ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -204,12 +221,13 @@ def enhance_image_prompt_with_scene(
         text_requests.prompt, text_requests.scene
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-enhance_image_prompt_with_scene: -"
+        " ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -234,12 +252,12 @@ def enhance_video_prompt(
     text_generator = TextGenerator()
     gen_status = text_generator.enhance_image_prompt(text_requests.prompt)
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-enhance_video_prompt: - ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -265,12 +283,13 @@ def enhance_video_prompt_with_scene(
         text_requests.prompt, text_requests.scene
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-enhance_video_prompt_with_scene: -"
+        " ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -296,12 +315,13 @@ def generate_image_prompts_from_scenes(
         text_requests.scenes
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-generate_image_prompts_from_scenes: -"
+        " ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status
 
 
@@ -327,10 +347,11 @@ def generate_video_prompts_from_scenes(
         text_requests.scenes
     )
   except Exception as ex:
-    logging.error("ERROR - text generation %s", str(ex))
-
-    return Response(
-        content=f"ERROR: {str(ex)}.  Please try again.",
-        status_code=500,
+    logging.error(
+        "DreamBoard - TEXT_GEN_ROUTES-generate_video_prompts_from_scenes: -"
+        " ERROR: %s",
+        str(ex),
     )
+    raise HTTPException(status_code=500, detail=str(ex)) from ex
+
   return gen_status

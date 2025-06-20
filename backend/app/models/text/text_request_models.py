@@ -26,6 +26,17 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+class StoriesGenerationRequest(BaseModel):
+  """Represents a request to generate stories"""
+
+  num_stories: int = 3  # Default to 3 for now
+  creative_brief_idea: str
+  target_audience: str
+  brand_guidelines: str | None = None
+  video_format: str
+  num_scenes: int
+
+
 class BrainstormScenesRequest(BaseModel):
   """
   Represents the parameters for a scene brainstorming request.

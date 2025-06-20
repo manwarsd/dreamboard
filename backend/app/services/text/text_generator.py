@@ -22,7 +22,8 @@ including brainstorming scenes and enhancing prompts.
 
 import logging
 
-from models.text.text_gen_models import SceneItem
+from models.text.text_gen_models import SceneItem, StoryItem
+from models.text import text_request_models
 from prompts import text_prompts_library
 
 from services import gemini_service
@@ -38,6 +39,78 @@ class TextGenerator:
   def __init__(self):
     """Initializes the TextGenerator instance."""
     pass
+
+  def brainstorm_stories(
+      self,
+      stories_generation_request: text_request_models.StoriesGenerationRequest,
+  ) -> list[StoryItem]:
+    """Branstorms stories based on user inputs"""
+    if stories_generation_request.creative_brief_idea is None:
+      # TODO: use default prompt from prompt library instead.
+      return "No scene description."
+
+    # Define LLM parameters, including the response schema.
+    llm_params = gemini_service.LLMParameters()
+    if stories_generation_request.brand_guidelines:
+      llm_params.generation_config["response_schema"] = RESPONSE_SCHEMAS[
+          "CREATE_STORIES_WITH_BRAND_GUIDELINES"
+      ]
+      prompts = text_prompts_library.prompts["STORIES"][
+          "CREATE_STORIES_WITH_BRAND_GUIDELINES"
+      ]
+      prompt_args = {
+          "num_stories": stories_generation_request.num_stories,
+          "creative_brief_idea": stories_generation_request.creative_brief_idea,
+          "target_audience": stories_generation_request.target_audience,
+          "video_format": stories_generation_request.video_format,
+          "brand_guidelines": stories_generation_request.brand_guidelines,
+          "num_scenes": stories_generation_request.num_scenes,
+      }
+      prompt = prompts.format(**prompt_args)
+    else:
+      llm_params.generation_config["response_schema"] = RESPONSE_SCHEMAS[
+          "CREATE_STORIES"
+      ]
+      prompt_args = {
+          "num_stories": stories_generation_request.num_stories,
+          "creative_brief_idea": stories_generation_request.creative_brief_idea,
+          "target_audience": stories_generation_request.target_audience,
+          "video_format": stories_generation_request.video_format,
+          "num_scenes": stories_generation_request.num_scenes,
+      }
+      prompt = text_prompts_library.prompts["STORIES"]["CREATE_STORIES"].format(
+          **prompt_args
+      )
+
+    # Execute the Gemini LLM call.
+    gemini = gemini_service.gemini_service
+    response = gemini.execute_gemini_with_genai(prompt, llm_params)
+    stories: list[StoryItem] = []
+    if response and response.parsed:
+      # Parse the LLM's response into SceneItem objects.
+      for story_data in response.parsed:
+        stories.append(
+            StoryItem(
+                id=story_data.get("id"),
+                title=story_data.get("title"),
+                description=story_data.get("description"),
+                brand_guidelines_adherence=story_data.get(
+                    "brand_guidelines_adherence"
+                ),
+                abcd_adherence=story_data.get("abcd_adherence"),
+                scenes=story_data.get("scenes"),
+            )
+        )
+      logging.info(
+          "DreamBoard - TEXT_GENERATOR: Generated stories: %s", stories
+      )
+    else:
+      logging.info((
+          "DreamBoard - TEXT_GENERATOR: Gemini response was empty in "
+          "brainstorm_stories. Please check."
+      ))
+
+    return stories
 
   def brainstorm_scenes(
       self, brainstorm_idea: str, brand_guidelines: str, num_scenes: int
