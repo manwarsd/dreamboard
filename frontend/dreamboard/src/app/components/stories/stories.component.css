@@ -19,37 +19,50 @@
  *
  ***************************************************************************/
 
-export enum UploadedFileType {
-  UserProvidedImage = 'UserProvidedImage',
-  ReferenceImage = 'ReferenceImage',
-  Video = 'Video',
-  None = 'None',
+.stories-container {
+  margin-top: 8px;
+
+  .scenes-container {
+    margin-top: 16px;
+
+    mat-card {
+      margin-bottom: 16px;
+
+      mat-card-subtitle {
+        font-size: 10px;
+      }
+
+      mat-icon {
+        margin-left: 90%;
+      }
+    }
+  }
+
+  .selection-buttons {
+    display: flex;
+    justify-content: center;
+
+    button {
+      margin-left: 5px;
+    }
+  }
+
+  .no-stories {
+    text-align: center;
+    margin: 200px 0px;
+  }
 }
 
-export interface UploadedFile {
-  sceneId: string;
-  id: string;
-  name: string;
-  gcsUri: string;
-  signedUri: string;
-  gcsFusePath: string;
-  mimeType: string;
-  type: UploadedFileType;
+mat-form-field {
+  margin-top: 16px;
+  width: 95%;
 }
 
-export interface SelectItem {
-  displayName: string;
-  value: string;
-  field1?: any; // represents any additional information for the item
+h3 {
+  margin-top: 50px;
 }
 
-export const enum UploadStatus {
-  InProgress = 'inProgress',
-  Cancel = 'cancel',
-  Error = 'error',
-  Success = 'success',
-}
-
-export interface APIError {
-  error: { [id: string] : { detail: string }; }
+.element-id {
+  margin-top: 8px;
+  font-size: 10px;
 }

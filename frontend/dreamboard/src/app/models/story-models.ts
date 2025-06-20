@@ -19,48 +19,48 @@
  *
  ***************************************************************************/
 
-import { ImageGenerationSettings } from './image-gen-models';
-import { VideoGenerationSettings } from './video-gen-models';
+import { Scene, SceneItem } from './scene-models';
+import { VideoScene } from './scene-models';
 
-export interface Scene {
+export interface Story {
   id: string;
-  number: number;
+  title: string;
   description: string;
-  imagePrompt: string;
+  brandGuidelinesAdherence: string;
+  abcdAdherence: string;
+  scenes: Scene[];
 }
 
-export interface SceneItem {
+export interface VideoStory {
   id: string;
-  number: number;
+  title: string;
   description: string;
-  image_prompt: string;
+  abcdAdherence: string;
+  scenes: VideoScene[];
 }
 
-export interface VideoScene {
-  id: string;
-  number: number;
-  description: string;
-  imageGenerationSettings: ImageGenerationSettings;
-  videoGenerationSettings: VideoGenerationSettings;
-}
-
-export interface ExportScenes {
-  videoScenes: VideoScene[];
-  replaceExistingScenesOnExport: boolean;
+export interface ExportStory {
+  story: VideoStory;
+  replaceExistingStoryOnExport: boolean;
   generateInitialImageForScenes: boolean;
-}
-
-export interface SceneValidations {
-  scenesWithNoGeneratedVideo: number[];
-  invalidTextToVideoScenes: number[];
-  sceneVideosToGenerate: number[];
-  sceneVideosToMerge: number[];
 }
 
 /* Models for backend interactions */
 
-export interface ScenesGenerationRequest {
-  idea: string;
+export interface StoriesGenerationRequest {
+  num_stories: number;
+  creative_brief_idea: string;
+  target_audience: string;
   brand_guidelines?: string;
+  video_format: string;
   num_scenes: number;
+}
+
+export interface StoryItem {
+  id: string;
+  title: string;
+  description: string;
+  brand_guidelines_adherence: string;
+  abcd_adherence: string;
+  scenes: SceneItem[];
 }

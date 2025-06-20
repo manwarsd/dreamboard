@@ -19,37 +19,17 @@
  *
  ***************************************************************************/
 
-export enum UploadedFileType {
-  UserProvidedImage = 'UserProvidedImage',
-  ReferenceImage = 'ReferenceImage',
-  Video = 'Video',
-  None = 'None',
-}
+import { VideoStory } from './models/story-models';
+import { v4 as uuidv4 } from 'uuid';
 
-export interface UploadedFile {
-  sceneId: string;
-  id: string;
-  name: string;
-  gcsUri: string;
-  signedUri: string;
-  gcsFusePath: string;
-  mimeType: string;
-  type: UploadedFileType;
-}
+export function getNewVideoStory() {
+  const videoStory: VideoStory = {
+    id: uuidv4(),
+    title: 'New Story',
+    description: 'This is a new story',
+    abcdAdherence: '',
+    scenes: [],
+  };
 
-export interface SelectItem {
-  displayName: string;
-  value: string;
-  field1?: any; // represents any additional information for the item
-}
-
-export const enum UploadStatus {
-  InProgress = 'inProgress',
-  Cancel = 'cancel',
-  Error = 'error',
-  Success = 'success',
-}
-
-export interface APIError {
-  error: { [id: string] : { detail: string }; }
+  return videoStory;
 }

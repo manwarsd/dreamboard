@@ -1,137 +1,80 @@
 <div class="brainstorm-container">
-  <h2>
-    <mat-icon>auto_fix_high</mat-icon> Brainstorming with Gemini
-    <mat-icon>auto_fix_high</mat-icon>
-  </h2>
+  <form [formGroup]="storiesSettingsForm">
+    <div class="brainstorming">
+      <div class="campaign-setup">
+        <h2>
+          <mat-icon>auto_fix_high</mat-icon> Brainstorm with Gemini
+          <mat-icon>auto_fix_high</mat-icon>
+        </h2>
 
-  <form [formGroup]="scenesSettingsForm">
-    <div class="idea-container">
-      <div class="idea">
-        <p>
-          Enter your story concept, theme, idea, setting here to get related
-          scene ideas from Gemini.
-        </p>
         <mat-form-field>
-          <mat-label>Idea</mat-label>
+          <mat-label>Creative Brief or Idea</mat-label>
           <textarea
             matInput
             placeholder=""
-            rows="8"
-            formControlName="idea"
+            rows="6"
+            formControlName="creativeBriefIdea"
           ></textarea>
         </mat-form-field>
-        <div>
-          <mat-form-field>
-            <mat-label>Brand Guidelines</mat-label>
-            <textarea
-              matInput
-              placeholder=""
-              rows="6"
-              formControlName="brandGuidelines"
-            ></textarea>
-          </mat-form-field>
+        <mat-form-field>
+          <mat-label>Target Audience</mat-label>
+          <textarea
+            matInput
+            placeholder=""
+            rows="3"
+            formControlName="targetAudience"
+          ></textarea>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Brand Guidelines</mat-label>
+          <textarea
+            matInput
+            placeholder=""
+            rows="6"
+            formControlName="brandGuidelines"
+          ></textarea>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Select Video Format</mat-label>
+          <mat-select name="videoFormat" formControlName="videoFormat">
+            @for (videoFormat of videoFormats; track videoFormat; let i =
+            $index) {
+            <mat-option [value]="videoFormat.value" [id]="i.toString()">{{
+              videoFormat.displayName
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <div class="button-actions">
+          <button mat-button><mat-icon>upload</mat-icon> Creative Brief</button>
+          <button mat-button>
+            <mat-icon>upload</mat-icon> Brand Guidelines
+          </button>
+        </div>
+        <div class="generate-images-check">
+          <mat-checkbox formControlName="generateInitialImageForScenes"
+            >Generate initial scene images on story selection</mat-checkbox
+          >
+        </div>
+        <div class="generate-button">
+          <button
+            mat-flat-button
+            (click)="generateStories()"
+            [disabled]="disableGenerateStoriesButton()"
+          >
+            <mat-icon>auto_fix_high</mat-icon> Generate Stories
+          </button>
         </div>
       </div>
-
-      <mat-form-field>
-        <mat-label>Num of Scenes</mat-label>
-        <input matInput type="number" formControlName="numScenes" />
-      </mat-form-field>
-
-      <div>
-        <mat-checkbox formControlName="replaceGeneratedScenes"
-          >Replace generated scenes with new scenes</mat-checkbox
-        >
+      <div class="stories">
+        <app-stories
+          [stories]="stories"
+          (onSelectStoryEvent)="onSelectStoryEvent($event)"
+        ></app-stories>
       </div>
-
-      <div>
-        <!--button mat-flat-button>
-          <mat-icon>upload</mat-icon> Upload Brand Guidelines
-        </button-->
-        <!--Maybe not needed?-->
-        <!--button mat-flat-button (click)="reWritePrompt()">
-          <mat-icon>auto_fix_high</mat-icon> Rewrite Prompt
-        </button-->
-        <button
-          mat-flat-button
-          (click)="generateScenes()"
-          [disabled]="disableGenerateScenesButton()"
-        >
-          <mat-icon>auto_fix_high</mat-icon> Generate Scenes
-        </button>
-      </div>
-    </div>
-
-    <div class="table-container mat-elevation-z8">
-      <h2>Generated Scenes</h2>
-      <table mat-table [dataSource]="dataSource">
-        <ng-container matColumnDef="number">
-          <th mat-header-cell *matHeaderCellDef>No.</th>
-          <td mat-cell *matCellDef="let element">{{ element.number }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef>Description</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.description }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="brandGuidelinesAlignment">
-          <th mat-header-cell *matHeaderCellDef>Brand Guidelines Alignment</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.brandGuidelinesAlignment }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="imagePrompt">
-          <th mat-header-cell *matHeaderCellDef>Image Prompt</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.imagePrompt }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox
-              (change)="$event ? toggleAllRows() : null"
-              [checked]="selection.hasValue() && isAllSelected()"
-              [indeterminate]="selection.hasValue() && !isAllSelected()"
-              [aria-label]="checkboxLabel()"
-            >
-            </mat-checkbox>
-          </th>
-          <td mat-cell *matCellDef="let row">
-            <mat-checkbox
-              (click)="$event.stopPropagation()"
-              (change)="$event ? selection.toggle(row) : null"
-              [checked]="selection.isSelected(row)"
-              [aria-label]="checkboxLabel(row)"
-            >
-            </mat-checkbox>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-
-      <mat-paginator
-        [pageSizeOptions]="[10, 20, 30]"
-        showFirstLastButtons
-        aria-label="Select page of periodic elements"
-      >
-      </mat-paginator>
-
-      <div>
-        <mat-checkbox formControlName="generateInitialImageForScenes"
-          >Generate initial image for scenes</mat-checkbox
-        >
-      </div>
-
-      <button class="export-scenes-button" mat-flat-button (click)="exportScenes()" [disabled]="!selection.hasValue()">
-        <mat-icon>arrow_circle_right</mat-icon> Export Scenes
-      </button>
     </div>
   </form>
 </div>

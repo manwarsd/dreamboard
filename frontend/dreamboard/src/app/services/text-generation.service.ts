@@ -21,8 +21,11 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 import { ScenesGenerationRequest } from '../models/scene-models';
+import { StoriesGenerationRequest } from '../models/story-models';
 import { environment } from '../../environments/environment.development';
+import { Title } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +34,13 @@ export class TextGenerationService {
   BASE_URL = environment.textGenerationApiURL;
 
   constructor(private http: HttpClient) {}
+
+  generateStories(storiesGeneration: StoriesGenerationRequest): any {
+    return this.http.post<any[]>(
+      `${this.BASE_URL}/brainstorm_stories`,
+      storiesGeneration
+    );
+  }
 
   generateScenes(scenesGeneration: ScenesGenerationRequest): any {
     return this.http.post<any[]>(

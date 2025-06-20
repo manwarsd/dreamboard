@@ -26,7 +26,7 @@
  * for further video production. It includes a table with pagination and selection for managing scenes.
  */
 
-import { Component, ViewChild, AfterViewInit, inject } from '@angular/core';
+import { Component, AfterViewInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,20 +39,26 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
+import { Scene, SceneItem } from '../../models/scene-models';
+import { SelectItem } from '../../models/settings-models';
 import {
-  Scene,
-  ScenesGenerationRequest,
-  VideoScene,
-  SceneItem,
-  ExportScenes,
-} from '../../models/scene-models';
-import { getNewVideoScene } from '../../video-utils';
+  getNewVideoScene,
+  getVideoFormats,
+  VIDEO_MODEL_MAX_LENGTH,
+} from '../../video-utils';
 import { ComponentsCommunicationService } from '../../services/components-communication.service';
 import { openSnackBar } from '../../utils';
 import { TextGenerationService } from '../../services/text-generation.service';
+import { StoriesComponent } from '../stories/stories.component';
+import {
+  Story,
+  VideoStory,
+  StoryItem,
+  StoriesGenerationRequest,
+  ExportStory,
+} from '../../models/story-models';
+import { VideoScene } from '../../models/scene-models';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-brainstorm',
@@ -62,30 +68,23 @@ import { TextGenerationService } from '../../services/text-generation.service';
     MatSelectModule,
     MatCheckboxModule,
     MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
     ReactiveFormsModule,
+    StoriesComponent,
   ],
   templateUrl: './brainstorm.component.html',
   styleUrl: './brainstorm.component.css',
 })
 export class BrainstormComponent implements AfterViewInit {
-  displayedColumns: string[] = [
-    'number',
-    'description',
-    'brandGuidelinesAlignment',
-    'imagePrompt',
-    'select',
-  ];
-  scenes: Scene[] = [];
-  dataSource = new MatTableDataSource<Scene>(this.scenes);
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  stories: Story[] = [];
+  selectedStory!: Story;
+  videoFormats: SelectItem[] = getVideoFormats();
   private _snackBar = inject(MatSnackBar);
-  scenesSettingsForm = new FormGroup({
-    idea: new FormControl('', [Validators.required]),
+
+  storiesSettingsForm = new FormGroup({
+    creativeBriefIdea: new FormControl('', [Validators.required]),
+    targetAudience: new FormControl('', [Validators.required]),
     brandGuidelines: new FormControl('', []),
-    numScenes: new FormControl(1, [Validators.required]),
-    replaceGeneratedScenes: new FormControl(true, []),
+    videoFormat: new FormControl('', [Validators.required]),
     generateInitialImageForScenes: new FormControl(false, []),
   });
 
@@ -99,49 +98,11 @@ export class BrainstormComponent implements AfterViewInit {
    * This is used to determine the state of the "select all" checkbox.
    * @returns {boolean} `true` if all rows are selected, `false` otherwise.
    */
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
+  ngAfterViewInit() {}
 
-  selection = new SelectionModel<Scene>(true, []);
-
-  /**
-   * Checks whether the number of selected scenes matches the total number of rows in the table.
-   * This is used to determine the state of the "select all" checkbox.
-   * @returns {boolean} `true` if all rows are selected, `false` otherwise.
-   */
-  isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  /**
-   * Toggles the selection state of all rows in the table.
-   * If all rows are currently selected, it clears the selection. Otherwise, it selects all rows.
-   * @returns {void}
-   */
-  toggleAllRows() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
-    }
-
-    this.selection.select(...this.dataSource.data);
-  }
-
-  /**
-   * Provides the accessibility label for the checkbox on a given row or the "select all" checkbox.
-   * @param {Scene} [row] - The optional `Scene` object for which to generate the label.
-   * @returns {string} The accessibility label for the checkbox.
-   */
-  checkboxLabel(row?: Scene): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
-      row.number + 1
-    }`;
+  onSelectStoryEvent(story: Story): void {
+    this.selectedStory = story;
+    this.exportStory();
   }
 
   /**
@@ -152,89 +113,81 @@ export class BrainstormComponent implements AfterViewInit {
    * to switch to the Scene Builder tab.
    * @returns {void}
    */
-  exportScenes(): void {
-    if (this.selection.selected.length == 0) {
-      openSnackBar(
-        this._snackBar,
-        'No scenes have been selected. Please select at least 1 scene and try again.',
-        20
-      );
-      return;
-    }
-    const generateImages = this.scenesSettingsForm.get(
+  exportStory(): void {
+    const generateImages = this.storiesSettingsForm.get(
       'generateInitialImageForScenes'
     )?.value!;
 
     if (generateImages) {
       openSnackBar(
         this._snackBar,
-        'Exporting scenes and generating initial images... Please wait.'
+        'Exporting story and generating initial images for scenes... Please wait.'
       );
     } else {
-      openSnackBar(this._snackBar, 'Exporting scenes... Please wait.');
+      openSnackBar(this._snackBar, 'Exporting story... Please wait.');
     }
 
-    // Export only selected scenes
-    const videoScenes: VideoScene[] = this.selection.selected.map(
+    // Convert suggested scenes to video scenes for Scene Builder
+    const videoScenes: VideoScene[] = this.selectedStory.scenes.map(
       (scene: Scene, index: number) => {
-        const videoScene = getNewVideoScene(index);
+        const videoScene: VideoScene = getNewVideoScene(index);
+        // Replace new video scene generated id with scene id
+        videoScene.id = scene.id;
         videoScene.description = scene.description;
         videoScene.imageGenerationSettings.prompt = scene.imagePrompt;
         return videoScene;
       }
     );
-    const exportScenes: ExportScenes = {
-      videoScenes: videoScenes,
-      replaceExistingScenesOnExport: true,
+
+    const exportedStory: VideoStory = {
+      id: this.selectedStory.id,
+      title: this.selectedStory.title,
+      description: this.selectedStory.description,
+      abcdAdherence: this.selectedStory.abcdAdherence,
+      scenes: videoScenes,
+    };
+
+    const exportStory: ExportStory = {
+      story: exportedStory,
+      replaceExistingStoryOnExport: true,
       generateInitialImageForScenes: generateImages,
     };
-    this.componentsCommunicationService.scenesExported(exportScenes);
+
+    this.componentsCommunicationService.storyExported(exportStory);
     this.componentsCommunicationService.tabChanged(1);
   }
 
-  /**
-   * Initiates the generation of new scenes based on the user's idea, brand guidelines,
-   * and desired number of scenes.
-   * Displays snackbar messages for the generation status.
-   * Upon successful generation, it updates the `scenes` array, either replacing existing ones
-   * or appending to them, and refreshes the table data source.
-   * Handles and displays error messages from the API.
-   * @returns {void}
-   */
-  generateScenes(): void {
-    openSnackBar(this._snackBar, 'Generating scenes... Please wait.');
+  generateStories(): void {
+    openSnackBar(this._snackBar, 'Generating stories... Please wait.');
 
-    const sceneGeneration = this.getScenesGenerationParams();
-    this.textGenerationService.generateScenes(sceneGeneration).subscribe(
-      (generatedScenes: SceneItem[]) => {
+    const storiesGeneration = this.getStoriesGenerationParams();
+    this.textGenerationService.generateStories(storiesGeneration).subscribe(
+      (generatedStories: StoryItem[]) => {
         openSnackBar(
           this._snackBar,
-          `${generatedScenes.length} ${
-            generatedScenes.length > 0 ? 'scenes' : 'scene'
-          } generated successfully!`,
-          20
+          `Recommended stories generated successfully!`,
+          15
         );
-        const replaceGeneratedScenes = this.scenesSettingsForm.get(
-          'replaceGeneratedScenes'
-        )?.value!;
-        const genScenes: Scene[] = generatedScenes.map(
-          (genScene: SceneItem) => {
-            return {
+        this.stories = generatedStories.map((genStory: StoryItem) => {
+          const story: Story = {
+            id: uuidv4(),
+            title: genStory.title,
+            description: genStory.description,
+            brandGuidelinesAdherence: genStory.brand_guidelines_adherence,
+            abcdAdherence: genStory.abcd_adherence,
+            scenes: [],
+          };
+          story.scenes = genStory.scenes.map((genScene: SceneItem) => {
+            const scene: Scene = {
+              id: uuidv4(),
               number: genScene.number,
               description: genScene.description,
-              brandGuidelinesAlignment: genScene.brand_guidelines_alignment,
               imagePrompt: genScene.image_prompt,
             };
-          }
-        );
-        if (replaceGeneratedScenes) {
-          this.scenes = genScenes;
-          // Also clear selection
-          this.selection.clear();
-        } else {
-          this.scenes.push.apply(this.scenes, genScenes);
-        }
-        this.dataSource.data = this.scenes;
+            return scene;
+          });
+          return story;
+        });
       },
       (error: any) => {
         let errorMessage;
@@ -252,25 +205,42 @@ export class BrainstormComponent implements AfterViewInit {
     );
   }
 
-  /**
-   * Constructs a `ScenesGenerationRequest` object from the current values in the `scenesSettingsForm`.
-   * This object is used to send to the text generation API to request new scenes.
-   * @returns {ScenesGenerationRequest} The constructed scenes generation request.
-   */
-  getScenesGenerationParams() {
-    return {
-      idea: this.scenesSettingsForm.get('idea')?.value,
-      brand_guidelines: this.scenesSettingsForm.get('brandGuidelines')?.value,
-      num_scenes: this.scenesSettingsForm.get('numScenes')?.value,
-    } as ScenesGenerationRequest;
+  getStoriesGenerationParams(): StoriesGenerationRequest {
+    const videoFormat = this.storiesSettingsForm.get('videoFormat')?.value!;
+    const storiesGenerationRequest: StoriesGenerationRequest = {
+      num_stories: 3, // Default to 3 for now
+      creative_brief_idea:
+        this.storiesSettingsForm.get('creativeBriefIdea')?.value!,
+      target_audience: this.storiesSettingsForm.get('targetAudience')?.value!,
+      brand_guidelines: this.storiesSettingsForm.get('brandGuidelines')?.value!,
+      video_format: videoFormat,
+      num_scenes: this.calculateNumScenesByVideoFormatType(videoFormat),
+    };
+
+    return storiesGenerationRequest;
+  }
+
+  calculateNumScenesByVideoFormatType(formatType: string): number {
+    const videoFormat = this.videoFormats.filter((format: SelectItem) => {
+      return format.value === formatType;
+    });
+    // Calculate num of scenes based on video format length
+    if (videoFormat.length > 0) {
+      const numScenes = Math.round(
+        videoFormat[0].field1 / VIDEO_MODEL_MAX_LENGTH
+      );
+      return numScenes;
+    }
+
+    return 0;
   }
 
   /**
-   * Determines whether the "Generate Scenes" button should be disabled.
+   * Determines whether the "Generate Stories" button should be disabled.
    * The button is enabled only if the `scenesSettingsForm` is valid (e.g., idea and number of scenes are filled).
    * @returns {boolean} `true` if the button should be disabled, `false` otherwise.
    */
-  disableGenerateScenesButton() {
-    return !this.scenesSettingsForm.valid;
+  disableGenerateStoriesButton() {
+    return !this.storiesSettingsForm.valid;
   }
 }

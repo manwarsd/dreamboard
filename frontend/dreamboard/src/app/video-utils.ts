@@ -31,6 +31,7 @@ import { getNewImageSettings } from './image-utils';
 import { v4 as uuidv4 } from 'uuid';
 
 export const VIDEO_MODEL_NAME = 'veo-2.0-generate-001';
+export const VIDEO_MODEL_MAX_LENGTH = 8;
 
 export function getNewVideoScene(existingScenesLen: number) {
   return {
@@ -217,4 +218,29 @@ export function parseVideoGenerationErrors(error: any) {
   }
 
   return errorMsg;
+}
+
+export function getVideoFormats() {
+  return [
+    {
+      displayName: 'Shorts',
+      value: 'shorts',
+      field1: 60, // length of the format
+    },
+    {
+      displayName: 'Skippable In-Stream',
+      value: 'skippable_in_stream',
+      field1: 20, // length of the format
+    },
+    {
+      displayName: 'Non Skippable In-Stream',
+      value: 'non_skippable_in_stream',
+      field1: 20, // length of the format
+    },
+    {
+      displayName: 'Bumper',
+      value: 'bumper',
+      field1: 6, // length of the format
+    },
+  ];
 }
