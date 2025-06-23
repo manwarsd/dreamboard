@@ -38,14 +38,14 @@ class FrameExtractorService:
     pass
 
     @staticmethod
-    def extract_frames(gcs_uri: str, story_id: str, scene_id: str, time_sec: int, frame_count: int) -> list[str]:
+    def extract_frames(gcs_uri: str, story_id: str, scene_num: str, time_sec: int, frame_count: int) -> list[str]:
         """
         Extracts a number of frames from a video at a specific timestamp and uploads them to GCS.
 
         Args:
             gcs_uri (str): The GCS URI of the video file to extract frames from.
             story_id (str): The unique identifier for the story.
-            scene_id (str): The unique identifier for the scene (used to locate the video).
+            scene_num (str): The number of the scene (used to locate the video).
             time_sec (int): The timestamp in seconds from which to extract frames.
             frame_count (int): The number of frames to extract from the given timestamp.
 
@@ -55,7 +55,7 @@ class FrameExtractorService:
 
         # Create temp working directory
         with tempfile.TemporaryDirectory() as tmp_dir:
-            local_video_path = os.path.join(tmp_dir, f"{scene_id}.mp4")
+            local_video_path = os.path.join(tmp_dir, f"{scene_num}.mp4")
 
             # Download video locally from GCS
             storage_service.storage_service.download_file_to_server(local_video_path, gcs_uri)
@@ -83,7 +83,7 @@ class FrameExtractorService:
             frame_urls = []
             for i in range(1, frame_count + 1):
                 frame_file = os.path.join(tmp_dir, f"frame_{i:03d}.png")
-                blob_name = f"{utils.get_images_bucket_folder_path(story_id)}/{scene_id}/second_{time_sec}/frame_{i}.png"
+                blob_name = f"{utils.get_images_bucket_folder_path(story_id)}/{scene_num}/frames/{time_sec}s_frame_{i}.png"
                 storage_service.storage_service.upload_from_filename(frame_file, blob_name)
                 frame_urls.append(blob_name)
 

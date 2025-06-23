@@ -168,7 +168,7 @@ def merge_videos(
 def extract_frames(
     gcs_uri: str,
     story_id: str,
-    scene_id: str,
+    scene_num: str,
     time_sec: int,
     frame_count: int,
 ):
@@ -178,12 +178,12 @@ def extract_frames(
         extracted_frame_filenames = frame_extractor.extract_frames(
             gcs_uri=gcs_uri,
             story_id=story_id,
-            scene_id=scene_id,
+            scene_num=scene_num,
             time_sec=time_sec,
             frame_count=frame_count,
         )
         return {
-            "message": f"Frames extracted successfully for scene {scene_id} at {time_sec}s",
+            "message": f"Frames extracted successfully for scene {scene_num} at {time_sec}s",
             "frames": extracted_frame_filenames,
         }
 
