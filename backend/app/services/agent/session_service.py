@@ -21,7 +21,9 @@ class SessionService:
     return self.session_service
 
   # TODO: might want to make this async, although create_session does return a session not a coroutine
-  def get_or_create_session(self, user_id: str, session_id: str) -> Session:
+  async def get_or_create_session(
+      self, user_id: str, session_id: str
+  ) -> Session:
     """Either retrieves or creates a session for the given app, user, and session_id
 
     Args:
@@ -31,12 +33,12 @@ class SessionService:
     Returns:
       The Session
     """
-    session = self.session_service.get_session(
+    session = await self.session_service.get_session(
         app_name=self.app_name, user_id=user_id, session_id=session_id
     )
     if session is None:
       print(f"Creating session for user {user_id} and session {session_id}")
-      session = self.session_service.create_session(
+      session = await self.session_service.create_session(
           app_name=self.app_name,
           user_id=user_id,
           session_id=session_id,

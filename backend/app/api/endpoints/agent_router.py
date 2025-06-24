@@ -61,7 +61,7 @@ async def request_agent_response(
   in_memory_agent = agent_service.lookup_agent(agent_name)
 
   agent_request_service = AgentRequestService(agent_service)
-  agent_request_service.initialize_agent_runner(
+  await agent_request_service.initialize_agent_runner(
       user_id, session_id, in_memory_agent.agent
   )
 

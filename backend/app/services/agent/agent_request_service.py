@@ -59,7 +59,7 @@ class AgentRequestService:
       AgentResponse: The final response from the agent.
     """
     root_agent = self.agent_service.lookup_agent(root_agent_name)
-    self.initialize_agent_runner(user_id, session_id, root_agent.agent)
+    await self.initialize_agent_runner(user_id, session_id, root_agent.agent)
     return await self.call_agent_async(message, runner, user_id, session_id)
 
   async def handle_media_types(
@@ -84,7 +84,7 @@ class AgentRequestService:
         filename=filename,
     )
 
-  def initialize_agent_runner(
+  async def initialize_agent_runner(
       self, user_id: str, session_id: str, root_agent: BaseAgent
   ) -> None:
     """Starts an agent session and then creates a Runner and assigns it to the object
@@ -97,7 +97,7 @@ class AgentRequestService:
 
     # TODO: can pass in initial state here
     # TODO: do we actually need to initialize the session here or should we do it in the call_agent_async method?
-    _ = self.session_service.get_or_create_session(user_id, session_id)
+    _ = await self.session_service.get_or_create_session(user_id, session_id)
 
     # Create a Runner
     self.runner = Runner(
