@@ -1,4 +1,5 @@
 - name: "text_bot"
+  id: 2
   instruction: "Generate an idea in text using the generate_text tool"
   description: "Generates an idea in text"
   tools: "generate_text"
@@ -7,6 +8,7 @@
   use_as_root_agent: 1
 
 - name: "image_bot"
+  id: 3
   instruction: "Generate an image using the generate_image tool"
   description: "Generates an image"
   tools: "generate_image"
@@ -15,6 +17,7 @@
   use_as_root_agent: 1
 
 - name: "video_bot"
+  id: 4
   instruction: "Generate a video using the generate_video tool"
   description: "Generates a video"
   tools: "generate_video"
@@ -23,6 +26,7 @@
   use_as_root_agent: 1
 
 - name: "weather_bot"
+  id: 5
   instruction: "Using the weather tool, it returns the weather for a given city"
   description: "Returns the weather for a given city"
   tools: "get_weather"

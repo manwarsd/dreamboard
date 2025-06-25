@@ -80,10 +80,11 @@ def load_agents(
 
   # Handles loading eihter an array or single yaml entry
   if isinstance(agent_data_yaml, dict):
-    agent_yaml = [agent_data_yaml]
+    agent_data_yaml = [agent_data_yaml]
 
   agents = []
   for agent_data in agent_data_yaml:
+    print(agent_data)
     agent_id = int(agent_data["id"])
     sub_agent_ids = agent_data.get("sub_agent_ids", "")
     agents.append(

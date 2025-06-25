@@ -4,11 +4,13 @@ from google.adk.tools import FunctionTool
 
 import importlib
 from google.adk.agents import Agent, SequentialAgent, BaseAgent
+from google.adk.code_executors import BuiltInCodeExecutor
+
 from sqlmodel import select
 
 
 from dependencies.database import get_session
-from models.agent.agent_model import AgentPydantic, SubAgentLink, InMemoryAgent
+from models.agent.agent_model import AgentPydantic, SubAgentLink, InMemoryAgent, AgentType
 
 
 PATH_TO_TOOLS = "tools"
@@ -115,6 +117,60 @@ class AgentService:
 
     return tools
 
+  def _build_adk_agent(
+      self,
+      agent_pydantic: AgentPydantic,
+      root_agent: Agent,
+      sub_agents: list[BaseAgent],
+      tools: list[FunctionTool],
+  ) -> BaseAgent:
+    """Builds the ADK agent object to store in memory
+
+    Args:
+      agent_pydantic: The agent metadata to load
+      root_agent: The root agent to load
+      sub_agents: The sub agents to load
+      tools: The tools to load
+
+    Returns:
+      The ADK agent in memory
+    """
+    # TODO: change agent type to Enum
+    if agent_pydantic.agent_type == AgentType.Sequential.value:
+      agent = SequentialAgent(
+          name=root_agent.name,
+          description=root_agent.description,
+          # instruction=root_agent.instruction,
+          # model=root_agent.model,
+          sub_agents=sub_agents,
+          # tools=tools,
+      )
+    elif agent_pydantic.agent_type == AgentType.LLM.value:
+      agent = Agent(
+          name=root_agent.name,
+          description=root_agent.description,
+          instruction=root_agent.instruction,
+          model=root_agent.model,
+          sub_agents=sub_agents,
+          tools=tools,
+      )
+    elif agent_pydantic.agent_type == AgentType.CodeExecutor.value:
+      agent = Agent(
+          name=root_agent.name,
+          description=root_agent.description,
+          instruction=root_agent.instruction,
+          model=root_agent.model,
+          sub_agents=sub_agents,
+          tools=tools,
+          code_executor=BuiltInCodeExecutor(
+              stateful=True, optimize_data_file=True
+          ),
+      )
+    else:
+      raise ValueError(f"Invalid agent type: {agent_pydantic.agent_type}")
+
+    return agent
+
   def _load_root_agent(
       self,
       agent_name: str,
@@ -144,26 +200,7 @@ class AgentService:
     if load_tools:
       tools = self._load_tools(agent_pydantic)
 
-    if agent_pydantic.agent_type == "Sequential":
-      agent = SequentialAgent(
-          name=root_agent.name,
-          description=root_agent.description,
-          # instruction=root_agent.instruction,
-          # model=root_agent.model,
-          sub_agents=sub_agents,
-          # tools=tools,
-      )
-    elif agent_pydantic.agent_type == "LLM":
-      agent = Agent(
-          name=root_agent.name,
-          description=root_agent.description,
-          instruction=root_agent.instruction,
-          model=root_agent.model,
-          sub_agents=sub_agents,
-          tools=tools,
-      )
-    else:
-      raise ValueError(f"Invalid agent type: {agent_pydantic.agent_type}")
+    agent = self._build_adk_agent(agent_pydantic, root_agent, sub_agents, tools)
 
     self.root_agent = agent
     self.agent_pydantic = agent_pydantic

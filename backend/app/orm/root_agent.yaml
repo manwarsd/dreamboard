@@ -1,4 +1,5 @@
 name: "orchestor_agent"
+id: 1
 instruction: >
   You help users brainstorm. Using the 3 agents assigned to you, generate a story. 
   The 3 sub agents are:
@@ -8,3 +9,4 @@ instruction: >
 description: "Use the X specialized sub-agents to respond to the user"
 agent_type: "Sequential"
 use_as_root_agent: 1
+sub_agent_ids: 2,3,4

@@ -6,6 +6,7 @@ class AgentType(Enum):
   Sequential = "Sequential"
   Parallel = "Parallel"
   Loop = "Loop"
+  CodeExecutor = "CodeExecutor"
 
 
 class AgentNames(Enum):
