@@ -16,7 +16,7 @@ BASE_FILE_PATH = "app/orm"
 
 
 # TODO: refactor to only have one agent call
-def initialize_scenario_data() -> list[Scenario]:
+def initialize_scenario_data(session: Session) -> None:
   with open(f"{BASE_FILE_PATH}/scenario_data.yaml", "r") as f:
     scenario_data_yaml = safe_load(f)
 
@@ -32,7 +32,8 @@ def initialize_scenario_data() -> list[Scenario]:
     )
     scenarios.append(scenario)
 
-  return scenarios
+  session.add_all(scenarios)
+  session.commit()
 
 
 def initialize_sample_user_data() -> None:
@@ -65,78 +66,81 @@ def initialize_sample_user_data() -> None:
     session.commit()
 
 
-def load_creative_agents(
-    file_path: str = f"{BASE_FILE_PATH}/creative_agents.yaml",
-) -> list[AgentPydantic]:
-  print(f"Loading creative agent data from {file_path}")
-  with open(file_path, "r") as f:
-    creative_agents_yaml = safe_load(f)
-
-  creative_agents = []
-  # Root agent is at index 1
-  for i, creative_agent in enumerate(creative_agents_yaml, start=1):
-    creative_agents.append(
-        AgentPydantic(
-            id=i + 1,
-            scenario_id=1,
-            agent_type=creative_agent.get("agent_type", AgentType.LLM.value),
-            name=creative_agent["name"],
-            instruction=creative_agent["instruction"],
-            description=creative_agent["description"],
-            tools=creative_agent.get("tools", ""),
-            modules=creative_agent.get("modules", ""),
-            model=FLASH_MODEL,
-            media_type=creative_agent.get("media_type", "text"),
-            use_as_root_agent=creative_agent.get("use_as_root_agent", 0),
-        )
-    )
-
-  return creative_agents
-
-
 # TODO: I think I can just parameterize this with the root agent name and
 # load it from the database
-def load_root_agent(
+def load_agents(
+    session: Session,
     file_path: str = f"{BASE_FILE_PATH}/root_agent.yaml",
-) -> AgentPydantic:
-  print(f"Loading root agent data from {file_path}")
+    scenario_id: int = 1,
+    model: str = FLASH_MODEL,
+) -> None:
+  print(f"Loading agent data from {file_path}")
   with open(file_path, "r") as f:
-    root_agent_yaml = safe_load(f)
+    agent_data_yaml = safe_load(f)
 
-  return AgentPydantic(
-      id=1,
-      scenario_id=1,
-      agent_type=root_agent_yaml.get("agent_type", AgentType.LLM.value),
-      name=root_agent_yaml["name"],
-      instruction=root_agent_yaml["instruction"],
-      description=root_agent_yaml["description"],
-      model=PRO_MODEL,
-      use_as_root_agent=root_agent_yaml.get("use_as_root_agent", 0),
-  )
+  # Handles loading eihter an array or single yaml entry
+  if isinstance(agent_data_yaml, dict):
+    agent_yaml = [agent_data_yaml]
+
+  agents = []
+  for agent_data in agent_data_yaml:
+    agent_id = int(agent_data["id"])
+    sub_agent_ids = agent_data.get("sub_agent_ids", "")
+    agents.append(
+        AgentPydantic(
+            id=agent_id,
+            scenario_id=scenario_id,
+            agent_type=agent_data.get("agent_type", AgentType.LLM.value),
+            name=agent_data["name"],
+            instruction=agent_data["instruction"],
+            description=agent_data["description"],
+            model=model,
+            tools=agent_data.get("tools", ""),
+            modules=agent_data.get("modules", ""),
+            media_type=agent_data.get("media_type", "text"),
+            use_as_root_agent=agent_data.get("use_as_root_agent", 0),
+            sub_agent_ids=sub_agent_ids,
+        )
+    )
+    if sub_agent_ids:
+      initialize_sub_agent_links(session, agent_id, sub_agent_ids)
+
+  session.add_all(agents)
+  session.commit()
 
 
-# TODO: refactor to manually specify links
-def initialize_sub_agent_links() -> list[SubAgentLink]:
+# TODO: refactor to manually specify links. Should specify and store
+# agent IDs in DB and utilzie them here
+def initialize_sub_agent_links(
+    session: Session, root_agent_id: int, sub_agent_ids: str
+) -> None:
   """Creates linkage between a root agent and the feedback agents"""
   # TODO: figure out a better way to get IDs of agents here
   # By building them into database
-  sub_agent_links = [
-      SubAgentLink(root_agent_id=1, sub_agent_id=2),
-      SubAgentLink(root_agent_id=1, sub_agent_id=3),
-      SubAgentLink(root_agent_id=1, sub_agent_id=4),
-  ]
-  return sub_agent_links
+  sub_agent_links = []
+  for sub_agent_id in sub_agent_ids.split(","):
+    sub_agent_links.append(
+        SubAgentLink(
+            root_agent_id=root_agent_id, sub_agent_id=int(sub_agent_id)
+        )
+    )
+  session.add_all(sub_agent_links)
+  session.commit()
 
 
 def initialize_sample_agent_data():
   with Session(engine) as session:
-    session.add_all(initialize_scenario_data())
-    session.commit()
-    session.add_all(load_creative_agents())
-    session.add(load_root_agent())
-    session.commit()
-    session.add_all(initialize_sub_agent_links())
-    session.commit()
+    initialize_scenario_data(session)
+    load_agents(
+        session,
+        file_path=f"{BASE_FILE_PATH}/root_agent.yaml",
+        model=FLASH_MODEL,
+    )
+    load_agents(
+        session,
+        file_path=f"{BASE_FILE_PATH}/creative_agents.yaml",
+        model=FLASH_MODEL,
+    )
 
 
 def initialize_all_sample_data():

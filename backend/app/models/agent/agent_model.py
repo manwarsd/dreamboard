@@ -39,6 +39,7 @@ class AgentPydantic(SQLModel, table=True):
   modules: str = Field(default="")
   # For cross DB compatibility, using 1 for True and 0 for false
   use_as_root_agent: int = Field(default=0)
+  sub_agent_ids: str = Field(default="")
 
 
 class SubAgentLink(SQLModel, table=True):
