@@ -28,6 +28,7 @@ from api.endpoints import (
     video_gen_routes,
     login_router,
     agent_router,
+    db_agent_router,
     scenario_router,
 )
 from api.admin import agents_crud, scenarios_crud, subagent_links_crud
@@ -58,3 +59,5 @@ api_router.include_router(
     subagent_links_crud.router,
     tags=["admin-subagent-links"],
 )
+
+api_router.include_router(db_agent_router.router, tags=["db_agent"])

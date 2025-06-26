@@ -20,11 +20,11 @@
 
 from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
-
-from .sub_agents import ds_agent, db_agent
+from google.adk.agents import LlmAgent
 
 
 async def call_db_agent(
+    agent: LlmAgent,
     question: str,
     tool_context: ToolContext,
 ):
@@ -34,7 +34,7 @@ async def call_db_agent(
       f" {tool_context.state['all_db_settings']['use_database']}"
   )
 
-  agent_tool = AgentTool(agent=db_agent)
+  agent_tool = AgentTool(agent=agent)
 
   db_agent_output = await agent_tool.run_async(
       args={"request": question}, tool_context=tool_context
@@ -44,6 +44,7 @@ async def call_db_agent(
 
 
 async def call_ds_agent(
+    agent: LlmAgent,
     question: str,
     tool_context: ToolContext,
 ):
@@ -62,7 +63,7 @@ async def call_ds_agent(
 
   """
 
-  agent_tool = AgentTool(agent=ds_agent)
+  agent_tool = AgentTool(agent=agent)
 
   ds_agent_output = await agent_tool.run_async(
       args={"request": question_with_data}, tool_context=tool_context

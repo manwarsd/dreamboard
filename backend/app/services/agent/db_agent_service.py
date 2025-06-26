@@ -30,7 +30,7 @@ from google.adk.tools import load_artifacts
 from tools.bigquery_agent import (
     get_database_settings as get_bq_database_settings,
 )
-from orm.data_science_agents import return_instructions_root, return_instructions_bigquery, return_instructions_bqml
+from orm.data_science_agents import return_instructions_root, return_instructions_bigquery, return_instructions_bqml, return_instructions_ds
 from tools.db_ds_multiagent import call_db_agent, call_ds_agent
 
 from tools.bigquery_agent import (
@@ -51,6 +51,9 @@ from enum import Enum
 from tools.bigquery_agent import (
     get_database_settings as get_bq_database_settings,
 )
+from google.adk.code_executors import BuiltInCodeExecutor
+
+from functools import partial
 
 
 class DBAgentType(Enum):
@@ -75,6 +78,17 @@ class DBAgentService:
     if instantiate_root_agent:
       self.root_agent = self.initialize_root_ml_agent()
 
+  def instantiate_ds_agent(self) -> Agent:
+    return Agent(
+        model=os.getenv("FLASH_MODEL"),
+        name="data_science_agent",
+        instruction=return_instructions_ds(),
+        # TODO: Play around with VertexAICodeExecutor
+        code_executor=BuiltInCodeExecutor(
+            stateful=True, optimize_data_file=True
+        ),
+    )
+
   # TODO: add in chase ML
   def instantiate_db_agent(self) -> Agent:
     return Agent(
@@ -85,7 +99,7 @@ class DBAgentService:
             initial_bq_nl2sql,
             run_bigquery_validation,
         ],
-        before_agent_callback=setup_before_agent_call,
+        before_agent_callback=self._setup_before_db_agent_call,
         generate_content_config=types.GenerateContentConfig(temperature=0.01),
     )
 
@@ -112,8 +126,8 @@ class DBAgentService:
                 """),
         sub_agents=[bqml_agent],
         tools=[
-            call_db_agent,
-            call_ds_agent,
+            partial(call_db_agent, self.instantiate_db_agent()),
+            partial(call_ds_agent, self.instantiate_ds_agent()),
             load_artifacts,
         ],
         before_agent_callback=self._setup_before_root_agent_call,
@@ -144,7 +158,7 @@ class DBAgentService:
         """
       )
 
-  def _setup_before_bg_ml_agent_call(self, callback_context: CallbackContext):
+  def _setup_before_bq_ml_agent_call(self, callback_context: CallbackContext):
     """Setup the agent."""
 
     # setting up database settings in session.state
@@ -169,8 +183,8 @@ class DBAgentService:
         """
       )
 
-    def _setup_before_bq_call(self, callback_context: CallbackContext):
-        """Setup the agent."""
+  def _setup_before_db_agent_call(self, callback_context: CallbackContext):
+    """Setup the agent."""
 
-        if "database_settings" not in callback_context.state:
-            callback_context.state["database_settings"] = get_bq_database_settings()
+    if "database_settings" not in callback_context.state:
+      callback_context.state["database_settings"] = get_bq_database_settings()

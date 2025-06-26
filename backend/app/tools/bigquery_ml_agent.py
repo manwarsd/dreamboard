@@ -18,30 +18,8 @@ import os
 from google.cloud import bigquery
 from vertexai import rag
 from google.adk.tools import ToolContext
-from services.agent.db_agent_service import DBAgentService
-
-
-async def call_db_agent(
-    question: str,
-    tool_context: ToolContext,
-):
-  """Tool to call database (nl2sql) agent."""
-  print(
-      "\n call_db_agent.use_database:"
-      f" {tool_context.state['all_db_settings']['use_database']}"
-  )
-  database_agent = (
-      bq_db_agent
-      if tool_context.state["all_db_settings"]["use_database"] == "BigQuery"
-      # else pg_db_agent
-      else None
-  )
-  agent_tool = AgentTool(agent=database_agent)
-  db_agent_output = await agent_tool.run_async(
-      args={"request": question}, tool_context=tool_context
-  )
-  tool_context.state["db_agent_output"] = db_agent_output
-  return db_agent_output
+from google.adk.tools.agent_tool import AgentTool
+from google.adk.agents import LlmAgent
 
 
 def check_bq_models(dataset_id: str) -> str:
@@ -151,6 +129,7 @@ def rag_response(query: str) -> str:
 
 
 async def call_db_agent(
+    agent: LlmAgent,
     question: str,
     tool_context: ToolContext,
 ):
@@ -159,9 +138,8 @@ async def call_db_agent(
       "\n call_db_agent.use_database:"
       f" {tool_context.state['all_db_settings']['use_database']}"
   )
-  agent_service = DBAgentService()
   database_agent = (
-      agent_service.instantiate_db_agent()
+      agent
       if tool_context.state["all_db_settings"]["use_database"] == "BigQuery"
       # else pg_db_agent
       else None
