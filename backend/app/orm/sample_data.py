@@ -110,14 +110,11 @@ def load_agents(
   session.commit()
 
 
-# TODO: refactor to manually specify links. Should specify and store
-# agent IDs in DB and utilzie them here
 def initialize_sub_agent_links(
     session: Session, root_agent_id: int, sub_agent_ids: str
 ) -> None:
   """Creates linkage between a root agent and the feedback agents"""
-  # TODO: figure out a better way to get IDs of agents here
-  # By building them into database
+  # TODO: refactor this to use agent names and then retrieve IDs dynamically
   sub_agent_links = []
   for sub_agent_id in sub_agent_ids.split(","):
     sub_agent_links.append(
