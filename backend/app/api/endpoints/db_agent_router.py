@@ -30,8 +30,6 @@ async def request_agent_response(
   db_agent_request_service = DBAgentRequestService()
   # Get the agent's response
   response = await db_agent_request_service.request_agent_response(
-      agent_name,
-      db_agent_request_service.get_runner(),
       user_id,
       session_id,
       message,

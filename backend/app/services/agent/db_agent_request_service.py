@@ -33,8 +33,6 @@ class DBAgentRequestService:
 
   async def request_agent_response(
       self,
-      root_agent_name: str,
-      runner: Runner,
       user_id: str,
       session_id: str,
       message: str,
@@ -53,7 +51,7 @@ class DBAgentRequestService:
     """
     root_agent = self.db_agent_service.initialize_root_ml_agent()
     await self.initialize_agent_runner(user_id, session_id, root_agent)
-    return await self.call_agent_async(message, runner, user_id, session_id)
+    return await self.call_agent_async(message,user_id, session_id)
 
   async def initialize_agent_runner(
       self, user_id: str, session_id: str, root_agent: BaseAgent
@@ -86,13 +84,12 @@ class DBAgentRequestService:
     return self.runner
 
   async def call_agent_async(
-      self, query: str, runner: Runner, user_id: str, session_id: str
+      self, query: str, user_id: str, session_id: str
   ) -> AgentResponse:
     """Sends a query to the LLM agent and prints the final response.
 
     Args:
         query: The message to send to the agent
-        runner: The ADK runner
         user_id: The user ID
         session_id: The session ID
 
@@ -108,11 +105,11 @@ class DBAgentRequestService:
     final_response_text = "Agent did not produce a final response."  # Default
     # Key Concept: run_async executes the agent logic and yields Events.
     # We iterate through events to find the final answer.
-    async for event in runner.run_async(
+    async for event in self.runner.run_async(
         user_id=user_id, session_id=session_id, new_message=content
     ):
       # You can uncomment the line below to see *all* events during execution
-      # print(f"  [Event] Author: {event.author}, Type: {type(event).__name__}, Final: {event.is_final_response()}, Content: {event.content}")
+      print(f"  [Event] Author: {event.author}, Type: {type(event).__name__}, Final: {event.is_final_response()}, Content: {event.content}")
 
       # Key Concept: is_final_response() marks the concluding message for the turn.
       if event.is_final_response():

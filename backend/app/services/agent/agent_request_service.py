@@ -38,6 +38,7 @@ class AgentRequestService:
     self.load_tools = load_tools
     self.session_service = SessionService()
 
+  # TODO: I don't think we actually need to pass in the runner here
   async def request_agent_response(
       self,
       root_agent_name: str,

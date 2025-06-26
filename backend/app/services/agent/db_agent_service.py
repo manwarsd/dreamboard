@@ -110,7 +110,7 @@ class DBAgentService:
         instruction=return_instructions_bqml(),
         before_agent_callback=self._setup_before_bq_ml_agent_call,
         # TODO: try binding a partial here instead?
-        tools=[execute_bqml_code, check_bq_models, call_db_agent, rag_response],
+        tools=[execute_bqml_code, check_bq_models, partial(call_db_agent, self.instantiate_db_agent()), rag_response],
     )
 
   def initialize_root_ml_agent(self) -> Agent:
