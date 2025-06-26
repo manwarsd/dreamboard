@@ -21,6 +21,7 @@ This class is instantiated on the app load
 import os
 from datetime import date
 
+from fastapi.background import P
 from google.genai import types
 
 from google.adk.agents import Agent
@@ -104,17 +105,29 @@ class DBAgentService:
     )
 
   def instantiate_bigquery_ml_agent(self) -> Agent:
+    partial_db_agent = partial(call_db_agent, self.instantiate_db_agent())
+    def helper_db():
+      return partial_db_agent
+
     return Agent(
         model=os.getenv("FLASH_MODEL"),
         name="bq_ml_agent",
         instruction=return_instructions_bqml(),
         before_agent_callback=self._setup_before_bq_ml_agent_call,
-        tools=[execute_bqml_code, check_bq_models, partial(call_db_agent, self.instantiate_db_agent()), rag_response],
+        tools=[execute_bqml_code, check_bq_models, helper_db, rag_response],
     )
 
   def initialize_root_ml_agent(self) -> Agent:
     """Initialize the root ML agent."""
     bqml_agent = self.instantiate_bigquery_ml_agent()
+    partial_db_agent = partial(call_db_agent, self.instantiate_db_agent())
+    partial_ds_agent = partial(call_ds_agent, self.instantiate_ds_agent())
+    def helper_db():
+      return partial_db_agent
+
+    def helper_ds():
+      return partial_ds_agent
+
     return Agent(
         model=os.getenv("PRO_MODEL"),
         name="db_ds_multiagent",
@@ -125,9 +138,9 @@ class DBAgentService:
                 """),
         sub_agents=[bqml_agent],
         tools=[
-            partial(call_db_agent, self.instantiate_db_agent()),
-            partial(call_ds_agent, self.instantiate_ds_agent()),
-            load_artifacts,
+            helper_db,
+            helper_ds,
+            load_artifacts
         ],
         before_agent_callback=self._setup_before_root_agent_call,
         generate_content_config=types.GenerateContentConfig(temperature=0.01),
