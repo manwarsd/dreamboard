@@ -26,6 +26,7 @@ class AgentPydantic(SQLModel, table=True):
       AgentType.Sequential.value,
       AgentType.Parallel.value,
       AgentType.Loop.value,
+      AgentType.CodeExecutor.value,
   ] = Field(sa_type=String, default=AgentType.LLM.value)
   name: str = Field(default=None)
   instruction: str = Field(default=None)
