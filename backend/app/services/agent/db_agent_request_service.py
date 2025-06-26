@@ -51,7 +51,7 @@ class DBAgentRequestService:
     """
     root_agent = self.db_agent_service.initialize_root_ml_agent()
     await self.initialize_agent_runner(user_id, session_id, root_agent)
-    return await self.call_agent_async(message,user_id, session_id)
+    return await self.call_agent_async(message, user_id, session_id)
 
   async def initialize_agent_runner(
       self, user_id: str, session_id: str, root_agent: BaseAgent
@@ -109,7 +109,10 @@ class DBAgentRequestService:
         user_id=user_id, session_id=session_id, new_message=content
     ):
       # You can uncomment the line below to see *all* events during execution
-      print(f"  [Event] Author: {event.author}, Type: {type(event).__name__}, Final: {event.is_final_response()}, Content: {event.content}")
+      print(
+          f"  [Event] Author: {event.author}, Type: {type(event).__name__},"
+          f" Final: {event.is_final_response()}, Content: {event.content}"
+      )
 
       # Key Concept: is_final_response() marks the concluding message for the turn.
       if event.is_final_response():

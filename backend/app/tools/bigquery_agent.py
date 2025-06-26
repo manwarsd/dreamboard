@@ -191,7 +191,7 @@ def initial_bq_nl2sql(
   )
 
   response = llm_client.models.generate_content(
-      model=os.getenv("BASELINE_NL2SQL_MODEL"),
+      model=os.getenv("FLASH_MODEL"),
       contents=prompt,
       config={"temperature": 0.1},
   )

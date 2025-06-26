@@ -26,13 +26,14 @@ from google.genai import types
 
 from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
-from google.adk.tools import load_artifacts
+from google.adk.tools import load_artifacts, ToolContext
 
 from tools.bigquery_agent import (
     get_database_settings as get_bq_database_settings,
 )
 from orm.data_science_agents import return_instructions_root, return_instructions_bigquery, return_instructions_bqml, return_instructions_ds
 from tools.db_ds_multiagent import call_db_agent, call_ds_agent
+from tools.bigquery_ml_agent import call_db_agent_for_bq_ml
 
 from tools.bigquery_agent import (
     initial_bq_nl2sql,
@@ -105,16 +106,26 @@ class DBAgentService:
     )
 
   def instantiate_bigquery_ml_agent(self) -> Agent:
-    partial_db_agent = partial(call_db_agent, self.instantiate_db_agent())
-    def helper_db():
-      return partial_db_agent
+    partial_db_agent = partial(
+        call_db_agent_for_bq_ml, self.instantiate_db_agent()
+    )
+
+    async def helper_db_bq_ml(question: str, tool_context: ToolContext):
+      return await partial_db_agent(question, tool_context)
 
     return Agent(
         model=os.getenv("FLASH_MODEL"),
         name="bq_ml_agent",
-        instruction=return_instructions_bqml(),
+        instruction=return_instructions_bqml(
+            call_db_agent_name="helper_db_bq_ml"
+        ),
         before_agent_callback=self._setup_before_bq_ml_agent_call,
-        tools=[execute_bqml_code, check_bq_models, helper_db, rag_response],
+        tools=[
+            execute_bqml_code,
+            check_bq_models,
+            helper_db_bq_ml,
+            rag_response,
+        ],
     )
 
   def initialize_root_ml_agent(self) -> Agent:
@@ -122,26 +133,31 @@ class DBAgentService:
     bqml_agent = self.instantiate_bigquery_ml_agent()
     partial_db_agent = partial(call_db_agent, self.instantiate_db_agent())
     partial_ds_agent = partial(call_ds_agent, self.instantiate_ds_agent())
-    def helper_db():
-      return partial_db_agent
 
-    def helper_ds():
-      return partial_ds_agent
+    async def helper_db(
+        question: str,
+        tool_context: ToolContext,
+    ):
+      return await partial_db_agent(question, tool_context)
+
+    async def helper_ds(
+        question: str,
+        tool_context: ToolContext,
+    ):
+      return await partial_ds_agent(question, tool_context)
 
     return Agent(
         model=os.getenv("PRO_MODEL"),
         name="db_ds_multiagent",
-        instruction=return_instructions_root(),
+        instruction=return_instructions_root(
+            call_db_agent_name="helper_db", call_ds_agent_name="helper_ds"
+        ),
         global_instruction=(f"""
                 You are a Data Science and Data Analytics Multi Agent System.
                 Todays date: {date.today()}
                 """),
         sub_agents=[bqml_agent],
-        tools=[
-            helper_db,
-            helper_ds,
-            load_artifacts
-        ],
+        tools=[helper_db, helper_ds, load_artifacts],
         before_agent_callback=self._setup_before_root_agent_call,
         generate_content_config=types.GenerateContentConfig(temperature=0.01),
     )
@@ -162,7 +178,10 @@ class DBAgentService:
       schema = callback_context.state["database_settings"]["bq_ddl_schema"]
 
       callback_context._invocation_context.agent.instruction = (
-          return_instructions_root() + f"""
+          return_instructions_root(
+              call_db_agent_name="helper_db", call_ds_agent_name="helper_ds"
+          )
+          + f"""
 
         --------- The BigQuery schema of the relevant data with a few sample rows. ---------
         {schema}

@@ -128,7 +128,7 @@ def rag_response(query: str) -> str:
   return str(response)
 
 
-async def call_db_agent(
+async def call_db_agent_for_bq_ml(
     agent: LlmAgent,
     question: str,
     tool_context: ToolContext,
