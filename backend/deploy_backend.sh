@@ -89,11 +89,12 @@ create_service_account() {
 deploy_cloud_run_service() {
     echo "Deploying Cloud Run Service..."
     gcloud run deploy $CLOUD_RUN_SERVICE_NAME --region=$LOCATION --source="." \
-    --service-account $SERVICE_ACCOUNT_NAME \
+    --service-account $SERVICE_ACCOUNT \
     --timeout 3600 \
     --add-volume name=$VOLUME_NAME,type=cloud-storage,bucket=$BUCKET_NAME \
     --add-volume-mount volume=$VOLUME_NAME,mount-path=$MOUNT_PATH \
     --memory 16Gi \
+    --cpu=4 \
     --set-env-vars PROJECT_ID=$GOOGLE_CLOUD_PROJECT,LOCATION=$LOCATION,GCS_BUCKET=$BUCKET_NAME \
     --allow-unauthenticated # REMOVE
     sleep 180

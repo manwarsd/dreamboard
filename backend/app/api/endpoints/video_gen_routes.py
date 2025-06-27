@@ -28,6 +28,7 @@ from fastapi.responses import Response
 from models import request_models
 from models.video import video_request_models
 from models.video.video_gen_models import VideoGenerationResponse
+from services.video.frame_extractor_service import FrameExtractorService
 from services.video.video_generator import VideoGenerator
 
 # Initialize the FastAPI router for video generation endpoints.
@@ -203,3 +204,31 @@ def apply_text_overlay(
         "DreamBoard - VIDEO_GEN_ROUTES: - APPLY TEXT OVERLAY ERROR: %s", str(ex)
     )
     raise HTTPException(status_code=500, detail=str(ex)) from ex
+ 
+
+@video_gen_router.post("/extract_frames")
+def extract_frames(
+    gcs_uri: str,
+    story_id: str,
+    scene_num: str,
+    time_sec: int,
+    frame_count: int,
+):
+    try:        
+
+        frame_extractor = FrameExtractorService()
+        extracted_frame_filenames = frame_extractor.extract_frames(
+            gcs_uri=gcs_uri,
+            story_id=story_id,
+            scene_num=scene_num,
+            time_sec=time_sec,
+            frame_count=frame_count,
+        )
+        return {
+            "message": f"Frames extracted successfully for scene {scene_num} at {time_sec}s",
+            "frames": extracted_frame_filenames,
+        }
+
+    except Exception as ex:
+        logging.error("DreamBoard - VIDEO_GEN_ROUTES: - EXTRACT_FRAMES ERROR: %s", str(ex))
+        raise HTTPException(status_code=500, detail=str(ex))

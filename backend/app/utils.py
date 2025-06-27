@@ -130,7 +130,9 @@ def get_scene_folder_path_from_uri(uri: str):
   if os.getenv("ENV") == "dev":
     scene_folder_path = uri_paths[len(uri_paths) - 2]
   else:
-    scene_folder_path = uri_paths[len(uri_paths) - 3]
+    scene_folder_path_id = uri_paths[len(uri_paths) - 2]
+    scene_folder_path_number = uri_paths[len(uri_paths) - 3]
+    scene_folder_path = f"{scene_folder_path_number}/{scene_folder_path_id}"
 
   return scene_folder_path
 
