@@ -143,8 +143,10 @@ export class BrainstormComponent implements AfterViewInit {
       id: this.selectedStory.id,
       title: this.selectedStory.title,
       description: this.selectedStory.description,
+      brandGuidelinesAdherence: this.selectedStory.brandGuidelinesAdherence,
       abcdAdherence: this.selectedStory.abcdAdherence,
       scenes: videoScenes,
+      generatedVideos: []
     };
 
     const exportStory: ExportStory = {
