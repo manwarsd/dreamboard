@@ -143,7 +143,7 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
     private imageGenerationService: ImageGenerationService,
     private textGenerationService: TextGenerationService,
     private componentsCommunicationService: ComponentsCommunicationService
-  ) { }
+  ) {}
 
   /**
    * Lifecycle hook that is called after Angular has fully initialized a component's view.
@@ -175,8 +175,12 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
       // Reference Image types are different from Image type.
       const uploadedReferenceImage: ImageReference = {
         id: file.id, // File ID is the same as Reference ID for ReferenceImage type
-        referenceType: this.getReferenceType(this.imageSettingsForm.get('referenceType')?.value!),
-        referenceSubType: this.getReferenceSubType(this.imageSettingsForm.get('referenceType')?.value!),
+        referenceType: this.getReferenceType(
+          this.imageSettingsForm.get('referenceType')?.value!
+        ),
+        referenceSubType: this.getReferenceSubType(
+          this.imageSettingsForm.get('referenceType')?.value!
+        ),
         name: file.name,
         gcsUri: file.gcsUri,
         signedUri: file.signedUri,
@@ -316,7 +320,7 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
     // Set up selected image. generatedImages array is populated after API call
     const selectedImageForVideo: Image =
       this.scene.imageGenerationSettings.generatedImages[
-      this.currentGeneratedImageIndex
+        this.currentGeneratedImageIndex
       ];
     this.scene.imageGenerationSettings.selectedImageForVideo =
       selectedImageForVideo;
@@ -411,7 +415,7 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
 
     const generatedImage =
       this.scene.imageGenerationSettings.generatedImages[
-      this.currentGeneratedImageIndex
+        this.currentGeneratedImageIndex
       ];
     // Set selected generated image in form
     this.imageSettingsForm.controls['selectedImageUri'].setValue(
@@ -432,12 +436,12 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
     const nextImageIndex = this.currentGeneratedImageIndex + 1;
     this.currentGeneratedImageIndex =
       nextImageIndex ===
-        this.scene.imageGenerationSettings.generatedImages.length
+      this.scene.imageGenerationSettings.generatedImages.length
         ? 0
         : nextImageIndex;
     const generatedImage =
       this.scene.imageGenerationSettings.generatedImages[
-      this.currentGeneratedImageIndex
+        this.currentGeneratedImageIndex
       ];
     // Set selected generated image in form
     this.imageSettingsForm.controls['selectedImageUri'].setValue(
@@ -465,25 +469,48 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
     this.updateSelectedImage(imageUri, updateForm);
   }
 
+  /**
+   * Handles the change event when the reference type is selected from a MatSelect.
+   * Updates the `referenceType` and `referenceSubType` for all existing
+   * reference images within the current scene's image generation settings.
+   *
+   * @param event The MatSelectChange event object, containing the new reference type value.
+   */
   onReferenceTypeChanged(event: MatSelectChange): void {
     const referenceType = event.value;
     // Update the reference type and sub type for all the already uploaded reference images
-    this.scene.imageGenerationSettings.referenceImages?.forEach((refImage: ImageReference) => {
-      refImage.referenceType = this.getReferenceType(referenceType);
-      refImage.referenceSubType = this.getReferenceSubType(referenceType);
-    });
+    this.scene.imageGenerationSettings.referenceImages?.forEach(
+      (refImage: ImageReference) => {
+        refImage.referenceType = this.getReferenceType(referenceType);
+        refImage.referenceSubType = this.getReferenceSubType(referenceType);
+      }
+    );
   }
 
+  /**
+   * Extracts the main reference type from a combined string value.
+   * Assumes the format "type-subtype" and returns the "type" part.
+   *
+   * @param value The combined string value (e.g., "pose-standing", "material-wood").
+   * @returns The extracted reference type (e.g., "pose", "material").
+   */
   getReferenceType(value: string): string {
     const referenceType = value.split('-')[0];
 
-    return referenceType
+    return referenceType;
   }
 
+  /**
+   * Extracts the reference sub-type from a combined string value.
+   * Assumes the format "type-subtype" and returns the "subtype" part.
+   *
+   * @param value The combined string value (e.g., "pose-standing", "material-wood").
+   * @returns The extracted reference sub-type (e.g., "standing", "wood").
+   */
   getReferenceSubType(value: string): string {
     const referenceSubtype = value.split('-')[1];
 
-    return referenceSubtype
+    return referenceSubtype;
   }
 
   /**
@@ -536,9 +563,9 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
 
     console.log(
       'current image prompt: ' +
-      currentPrompt +
-      '\nScene Description:' +
-      sceneDescription
+        currentPrompt +
+        '\nScene Description:' +
+        sceneDescription
     );
 
     this.textGenerationService
@@ -603,7 +630,7 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
             );
             const lastGenImage =
               this.scene.imageGenerationSettings.generatedImages[
-              this.scene.imageGenerationSettings.generatedImages.length - 1
+                this.scene.imageGenerationSettings.generatedImages.length - 1
               ];
             const updateForm = true;
             this.updateSelectedImage(lastGenImage.signedUri, updateForm);
@@ -644,7 +671,7 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
     this.setCurrentGeneratedImageIndex(imageSignedUri);
     const selectedImageForVideo =
       this.scene.imageGenerationSettings.generatedImages[
-      this.currentGeneratedImageIndex
+        this.currentGeneratedImageIndex
       ];
     // Set selected image in scene to be used as selectedImageForVideo
     this.scene.imageGenerationSettings.selectedImageForVideo =
@@ -799,12 +826,12 @@ export class ImageSceneSettingsComponent implements AfterViewInit {
         //const referenceType = descFormControlValue.value.split('@')[0];
         return {
           reference_id: index + 1,
-          reference_type: this.getReferenceType(this.imageSettingsForm
-            .get('referenceType')
-            ?.value!),
-          reference_subtype: this.getReferenceSubType(this.imageSettingsForm
-            .get('referenceType')
-            ?.value!),
+          reference_type: this.getReferenceType(
+            this.imageSettingsForm.get('referenceType')?.value!
+          ),
+          reference_subtype: this.getReferenceSubType(
+            this.imageSettingsForm.get('referenceType')?.value!
+          ),
           description: descriptionElement.value,
           id: refImageFound[0].id,
           name: refImageFound[0].name, // validate this
