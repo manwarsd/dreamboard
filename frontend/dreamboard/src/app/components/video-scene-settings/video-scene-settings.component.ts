@@ -101,7 +101,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
   constructor(
     private videoGenerationService: VideoGenerationService,
     private textGenerationService: TextGenerationService
-  ) { }
+  ) {}
 
   /**
    * Lifecycle hook that is called after Angular has fully initialized a component's view.
@@ -155,7 +155,10 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
     if (this.scene.videoGenerationSettings.selectedVideo) {
       // Update selected video index in carrousel
       const updateForm = true;
-      this.updateSelectedVideo(this.scene.videoGenerationSettings.selectedVideo.signedUri, updateForm)
+      this.updateSelectedVideo(
+        this.scene.videoGenerationSettings.selectedVideo.signedUri,
+        updateForm
+      );
     }
   }
 
@@ -190,7 +193,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
     // Set up selected image. generatedImages array is populated after API call
     const selectedVideo: Video =
       this.scene.videoGenerationSettings.generatedVideos[
-      this.currentGeneratedVideoIndex
+        this.currentGeneratedVideoIndex
       ];
     this.scene.videoGenerationSettings.selectedVideo = selectedVideo;
   }
@@ -219,7 +222,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
 
     const generatedVideo =
       this.scene.videoGenerationSettings.generatedVideos[
-      this.currentGeneratedVideoIndex
+        this.currentGeneratedVideoIndex
       ];
     // Set selected generated image in form
     this.videoSettingsForm.controls['selectedVideoUri'].setValue(
@@ -240,12 +243,12 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
     const nextVideoIndex = this.currentGeneratedVideoIndex + 1;
     this.currentGeneratedVideoIndex =
       nextVideoIndex ===
-        this.scene.videoGenerationSettings.generatedVideos.length
+      this.scene.videoGenerationSettings.generatedVideos.length
         ? 0
         : nextVideoIndex;
     const generatedVideo =
       this.scene.videoGenerationSettings.generatedVideos[
-      this.currentGeneratedVideoIndex
+        this.currentGeneratedVideoIndex
       ];
     // Set selected generated image in form
     this.videoSettingsForm.controls['selectedVideoUri'].setValue(
@@ -293,7 +296,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
     this.setCurrentGeneratedVideoIndex(videoSignedUri);
     const selectedVideo =
       this.scene.videoGenerationSettings.generatedVideos[
-      this.currentGeneratedVideoIndex
+        this.currentGeneratedVideoIndex
       ];
     // Set selected video in scene to be used as selectedVideo segment in final video
     this.scene.videoGenerationSettings.selectedVideo = selectedVideo;
@@ -319,7 +322,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
     };
     console.log(
       'VideoGeneration Request before sending to backend' +
-      JSON.stringify(videoGeneration)
+        JSON.stringify(videoGeneration)
     );
     this.videoGenerationService
       .generateVideosFromScenes(this.storyId, videoGeneration)
@@ -334,7 +337,7 @@ export class VideoSceneSettingsComponent implements AfterViewInit {
             // Select the last video
             const lastVideo =
               this.scene.videoGenerationSettings.generatedVideos[
-              this.scene.videoGenerationSettings.generatedVideos.length - 1
+                this.scene.videoGenerationSettings.generatedVideos.length - 1
               ];
             const updateForm = true;
             this.updateSelectedVideo(lastVideo.signedUri, updateForm);
