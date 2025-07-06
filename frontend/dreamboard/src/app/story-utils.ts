@@ -30,6 +30,7 @@ export function getNewVideoStory() {
     brandGuidelinesAdherence: '',
     abcdAdherence: '',
     scenes: [],
+    generatedVideos: []
   };
 
   return videoStory;

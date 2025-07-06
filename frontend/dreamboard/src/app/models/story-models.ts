@@ -39,7 +39,7 @@ export interface VideoStory {
   brandGuidelinesAdherence: string;
   abcdAdherence: string;
   scenes: VideoScene[];
-  generatedVideos?: Video[];
+  generatedVideos: Video[];
 }
 
 export interface ExportStory {

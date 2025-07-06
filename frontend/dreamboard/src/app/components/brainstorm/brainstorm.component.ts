@@ -146,6 +146,7 @@ export class BrainstormComponent implements AfterViewInit {
       brandGuidelinesAdherence: this.selectedStory.brandGuidelinesAdherence,
       abcdAdherence: this.selectedStory.abcdAdherence,
       scenes: videoScenes,
+      generatedVideos: []
     };
 
     const exportStory: ExportStory = {
