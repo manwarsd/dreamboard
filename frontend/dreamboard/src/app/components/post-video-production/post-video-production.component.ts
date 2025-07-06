@@ -45,8 +45,10 @@ export class PostVideoProductionComponent {
   constructor(
     private componentsCommunicationService: ComponentsCommunicationService
   ) {
-    componentsCommunicationService.videoGenerated$.subscribe((story: VideoStory) => {
-      this.story = story;
-    })
+    componentsCommunicationService.videoGenerated$.subscribe(
+      (story: VideoStory) => {
+        this.story = story;
+      }
+    );
   }
 }
