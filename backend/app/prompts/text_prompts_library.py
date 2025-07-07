@@ -477,4 +477,20 @@ prompts = {
           Scene Description: {scene_description}
         """,
     },
+    "BRAND_GUIDELINES": {
+      "SYSTEM_INSTRUCTIONS": """
+      Extract and summarize the brand guidelines from the document
+      """,
+      "EXTRACT_BRAND_GUIDELINES": """
+      Extract the brand guidelines from the document
+      """
+    },
+    "CREATIVE_BRIEF": {
+      "SYSTEM_INSTRUCTIONS": """
+      Extract the creative brief from the document
+      """,
+      "EXTRACT_CREATIVE_BRIEF": """
+      Extract the creative brief from the document
+      """
+    }
 }

@@ -83,3 +83,10 @@ class TextRequest(BaseModel):
   prompt: str | None = ""
   scene: str | None = ""
   idea: str | None = ""
+
+
+class ExtractTextRequest(BaseModel):
+  """TODO"""
+
+  file_gcs_uri: str
+  file_type: str
