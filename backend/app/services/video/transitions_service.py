@@ -21,7 +21,6 @@ blur, and warp effects.
 """
 
 import cv2
-import logging
 import numpy as np
 import subprocess
 import tempfile
