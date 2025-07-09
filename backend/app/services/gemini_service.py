@@ -32,7 +32,7 @@ class LLMParameters:
   Class that represents the required params to make a prediction to the LLM.
   """
 
-  model_name: str = "gemini-2.5-flash-preview-04-17"
+  model_name: str = "gemini-2.5-flash"
   location: str = os.getenv("LOCATION")
   modality: dict = field(default_factory=lambda: {"type": "TEXT"})
   response_modalities: dict = field(default_factory=lambda: {"type": "TEXT"})

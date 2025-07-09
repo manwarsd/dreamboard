@@ -361,7 +361,25 @@ def generate_video_prompts_from_scenes(
 async def extract_text_from_file(
     extract_text_request: ExtractTextRequest,
 ) -> str:
-  """TODO"""
+  """Extracts text content from a file located in Google Cloud Storage based on its type.
+
+  This endpoint processes requests to extract text from files such as "CreativeBrief"
+  or "BrandGuidelines". It utilizes a `TextGenerator` to handle the specific
+  extraction logic for each file type.
+
+  Args:
+    extract_text_request: An instance of `ExtractTextRequest` containing
+      information about the file to be processed, including its type
+      (`file_type`) and its GCS URI (`file_gcs_uri`).
+
+  Returns:
+    A string containing the extracted text content from the file.
+    Returns an empty string if the `file_type` is not "CreativeBrief" or "BrandGuidelines".
+
+  Raises:
+    HTTPException: If an error occurs during the text extraction process,
+      an HTTPException with a 500 status code and the error detail is raised.
+  """
   try:
     text_generator = TextGenerator()
 

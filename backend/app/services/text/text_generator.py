@@ -434,7 +434,14 @@ class TextGenerator:
     return video_prompts
 
   def extract_brand_guidelines_from_file(self, file_gcs_uri: str) -> str:
-    """TODO"""
+    """Extracts brand guidelines from a GCS file using Gemini LLM.
+
+    Args:
+      file_gcs_uri: The Google Cloud Storage URI of the brand guidelines file.
+
+    Returns:
+      The extracted brand guidelines text, or an empty string if extraction fails.
+    """
     prompt_template = text_prompts_library.prompts["BRAND_GUIDELINES"]
     prompt = prompt_template["EXTRACT_BRAND_GUIDELINES"]
 
@@ -459,7 +466,14 @@ class TextGenerator:
     return ""
 
   def extract_creative_brief_from_file(self, file_gcs_uri: str) -> str:
-    """TODO"""
+    """Extracts a creative brief from a GCS file using Gemini LLM.
+
+    Args:
+      file_gcs_uri: The Google Cloud Storage URI of the creative brief file.
+
+    Returns:
+      The extracted creative brief text, or an empty string if extraction fails.
+    """
     prompt_template = text_prompts_library.prompts["CREATIVE_BRIEF"]
     prompt = prompt_template["EXTRACT_CREATIVE_BRIEF"]
 
