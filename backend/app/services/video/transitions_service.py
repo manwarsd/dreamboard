@@ -134,7 +134,7 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     clip1_audio= clip1_audio.subclip(0, transition_start)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -244,7 +244,7 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     clip1_audio= clip1_audio.subclip(0, transition_start)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -423,7 +423,7 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     clip1_audio= clip1_audio.subclip(0, transition_start)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -652,7 +652,7 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     clip1_audio= clip1_audio.subclip(0, transition_start)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -754,7 +754,7 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     #clip1_audio= clip1_audio.subclip(0, transition_start)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -824,7 +824,7 @@ class TransitionsService:
     final_clip = editor.concatenate_videoclips([clip1, clip2])
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -974,7 +974,7 @@ class TransitionsService:
     final_clip = editor.concatenate_videoclips([clip1_blurred, clip2_blurred])
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -1067,7 +1067,7 @@ class TransitionsService:
     ])
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
 
@@ -1174,7 +1174,7 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     clip1_audio= clip1_audio.subclip(0, clip1.duration - duration)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
     return final_clip
 
   def slide_warp(
@@ -1327,6 +1327,6 @@ class TransitionsService:
     clip2_audio = editor.AudioFileClip(clip2.filename)
     clip1_audio = editor.AudioFileClip(clip1.filename)
     clip1_audio= clip1_audio.subclip(0, clip1.duration - duration)
-    final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
+    #final_clip = final_clip.set_audio(editor.concatenate_audioclips([clip1_audio, clip2_audio]))
 
     return final_clip
