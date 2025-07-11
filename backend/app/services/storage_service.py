@@ -20,11 +20,9 @@ import logging
 import os
 
 import google.auth
+from core.config import settings
 from google.api_core.client_info import ClientInfo
 from google.cloud import storage
-
-
-USER_AGENT = "cloud-solutions/mas-dreamboard-usage-v1"
 
 
 class StorageService:
@@ -51,7 +49,7 @@ class StorageService:
 
     # Create Storage client
     self.storage_client = storage.Client(
-        project=self.storage_project, client_info=ClientInfo(user_agent=USER_AGENT)
+        project=self.storage_project, client_info=ClientInfo(user_agent=settings.USER_AGENT)
     )
     self.bucket = self.storage_client.bucket(self.bucket_name)
 
