@@ -351,16 +351,17 @@ class VideoGenerator:
     input_video_file_name = utils.get_file_name_from_uri(gcs_video_path)
     input_logo_file_name = utils.get_file_name_from_uri(logo_overlay.gcs_logo_path)
     output_file_name = f"logo_overlay_{input_video_file_name}"
-    output_folder = utils.get_videos_gcs_fuse_path(story_id)
-    input_video_fuse_path = f"{output_folder}/{input_video_file_name}"
-    input_logo_fuse_path = f"{output_folder}/{input_logo_file_name}"
-    output_fuse_path = f"{output_folder}/{output_file_name}"
+    video_output_folder = utils.get_videos_gcs_fuse_path(story_id)
+    image_output_folder = utils.get_images_gcs_fuse_path(story_id)
+    input_video_fuse_path = f"{video_output_folder}/{input_video_file_name}"
+    input_logo_fuse_path = f"{image_output_folder}/{input_logo_file_name}"
+    output_fuse_path = f"{video_output_folder}/{output_file_name}"
 
     # Download files if in dev environment
     if os.getenv("ENV") == "dev":
       # Download only for local testing if folder doesn't exist
-      if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+      if not os.path.exists(video_output_folder):
+        os.makedirs(video_output_folder)
       storage_service.storage_service.download_file_to_server(
           input_video_fuse_path, gcs_video_path
       )
