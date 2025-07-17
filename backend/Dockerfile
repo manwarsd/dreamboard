@@ -4,14 +4,13 @@ ENV PYTHONUNBUFFERED True
 
 WORKDIR /code
 
-COPY requirements.txt /code/requirements.txt
-
+COPY requirements.txt /code/
 RUN pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
+COPY main.py /code/                    # ✅ This was missing
 COPY app /code/app
 
-ENV PYTHONPATH "${PYTHONPATH}:/code/app"
+ENV PYTHONPATH="${PYTHONPATH}:/code/app"
 
-# 👇 Fix: main.py is inside app/, so use `app.main:app`
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
